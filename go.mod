@@ -1,3 +1,3 @@
 module gitlab.com/kdeng00/icarus-models
 
-go 1.23.5
+go 1.24
