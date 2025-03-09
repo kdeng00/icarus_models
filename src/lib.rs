@@ -1,5 +1,6 @@
 pub mod access_level;
 pub mod login_result;
+pub mod token;
 pub mod user;
 
 pub fn add(left: u64, right: u64) -> u64 {
