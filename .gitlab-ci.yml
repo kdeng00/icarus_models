@@ -44,10 +44,10 @@ deploy:
   stage: deploy
   image: rust:1.85
   script:
-    - echo "Printing environment"
-    - env
-    - cargo login "$CARGO_LOGIN_TOKEN"
-    - echo "Next step"
+    - echo "Deployment will be configured when this is ready for use"
+    # - env
+    # Uncomment when you are ready for this to be published
+    # - cargo login "$CARGO_LOGIN_TOKEN"
     # - cargo publish
   dependencies:
     - build
