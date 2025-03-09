@@ -47,7 +47,8 @@ deploy:
     - echo "Printing environment"
     - env
     - cargo login "$CARGO_LOGIN_TOKEN"
-    - cargo publish
+    - echo "Next step"
+    # - cargo publish
   dependencies:
     - build
   rules:
