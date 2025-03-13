@@ -2,6 +2,7 @@ pub mod access_level;
 pub mod login_result;
 pub mod song;
 pub mod token;
+pub mod types;
 pub mod user;
 
 pub fn add(left: u64, right: u64) -> u64 {
