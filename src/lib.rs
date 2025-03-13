@@ -1,5 +1,6 @@
 pub mod access_level;
 pub mod login_result;
+pub mod song;
 pub mod token;
 pub mod user;
 
