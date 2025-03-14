@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "is_id_valid")]
     pub id: i32,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub username: String,
@@ -27,8 +27,8 @@ pub struct User {
     pub last_login: String,
 }
 
-fn is_zero(num: &i32) -> bool {
-    *num == 0
+fn is_id_valid(num: &i32) -> bool {
+    *num > 0
 }
 
 impl Default for User {
@@ -50,7 +50,11 @@ impl Default for User {
 }
 
 impl User {
-    pub fn to_json(&self) -> Result<String, serde_json::Error> {
-        return serde_json::to_string_pretty(&self);
+    pub fn to_json(&self, output_pretty: bool) -> Result<String, serde_json::Error> {
+        if output_pretty {
+            return serde_json::to_string_pretty(&self);
+        } else {
+            return serde_json::to_string(&self);
+        }
     }
 }
