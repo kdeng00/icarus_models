@@ -11,6 +11,22 @@ pub struct Token {
     pub issued: i32,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct AccessToken {
+    #[serde(alias = "user_id")]
+    pub user_id: i32,
+    #[serde(alias = "username")]
+    pub username: String,
+    #[serde(alias = "token")]
+    pub token: String,
+    #[serde(alias = "token_type")]
+    pub token_type: String,
+    #[serde(alias = "expiration")]
+    pub expiration: i32,
+    #[serde(alias = "message")]
+    pub message: String,
+}
+
 impl Default for Token {
     fn default() -> Self {
         Token {
@@ -20,6 +36,14 @@ impl Default for Token {
             issuer: String::new(),
             issued: -1,
         }
+    }
+}
+
+impl AccessToken {
+    pub fn bearer_token(&self) -> String {
+        let mut token: String = String::from("Bearer ");
+        token += &self.token.clone();
+        return token;
     }
 }
 
