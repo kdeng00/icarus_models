@@ -48,7 +48,8 @@ extract_version:
     - apk add --no-cache jq
     - VERSION=$(jq -r '.package.version' Cargo.toml)
     - if [ $? -ne 0 ]; then echo "Error extracting version"; exit 1; fi
-    - echo "Extracted version: $VERSION"
+    - echo "Extracted version is"
+    - echo "$VERSION"
     - echo "VERSION=$VERSION" > version.env
   artifacts:
     reports:
