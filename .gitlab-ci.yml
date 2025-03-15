@@ -47,7 +47,8 @@ extract_version:
   script:
     - apk add --no-cache jq
     - VERSION=$(jq -r '.package.version' Cargo.toml)
-    - echo "Version: $VERSION"
+    - if [ $? -ne 0 ]; then echo "Error extracting version"; exit 1; fi
+    - echo "Extracted version: $VERSION"
     - echo "VERSION=$VERSION" > version.env
   artifacts:
     reports:
@@ -61,7 +62,7 @@ tag_release:
   dependencies:
     - extract_version
   script:
-    - release-cli create --name "Release $VERSION" --tag-name "v$VERSION"
+    - release-cli create --name "Release v$VERSION" --tag-name "v$VERSION"
 
 deploy:
   stage: deploy
