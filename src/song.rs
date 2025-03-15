@@ -90,9 +90,34 @@ impl Default for Song {
 }
 
 impl Song {
+    pub fn to_metadata_json(&self, pretty: bool) -> Result<String, serde_json::Error> {
+        if pretty {
+            return serde_json::to_string_pretty(&self);
+        } else {
+            return serde_json::to_string(&self);
+        }
+    }
+
     // TODO: Implement
-    pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
-        return serde_json::to_string_pretty(&self);
+    pub fn song_path(&self) -> String {
+        return String::new();
+    }
+
+    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
+        let path = self.song_path();
+
+        let mut file = std::fs::File::open(path)?;
+        let mut buffer: Vec<u8> = Vec::new();
+        file.read_to_end(&mut buffer)?;
+
+        if buffer.len() == 0 {
+            Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "File is empty",
+            ))
+        } else {
+            Ok(buffer)
+        }
     }
 }
 
