@@ -5,62 +5,86 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
+    #[serde(skip_serializing_if = "is_zero")]
     #[serde(alias = "id")]
-    pub id: Option<i32>,
-    pub title: Option<String>,
-    pub artist: Option<String>,
-    pub album: Option<String>,
-    pub album_artist: Option<String>,
-    pub genre: Option<String>,
-    pub year: Option<i32>,
-    pub duration: Option<i32>,
-    pub track: Option<i32>,
-    pub disc: Option<i32>,
-    pub disc_count: Option<i32>,
-    pub track_count: Option<i32>,
-    pub audio_type: Option<String>,
-    pub date_created: Option<String>,
-    pub filename: Option<String>,
-    pub user_id: Option<i32>,
+    pub id: i32,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub title: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub artist: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub album: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub album_artist: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub genre: String,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub year: i32,
+    #[serde(skip_serializing_if = "is_dur_not_set")]
+    pub duration: i32,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub track: i32,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub disc: i32,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub disc_count: i32,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub track_count: i32,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub audio_type: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub date_created: String,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub filename: String,
+    #[serde(skip_serializing_if = "is_zero")]
+    pub user_id: i32,
     #[serde(skip)]
-    pub data: Option<Vec<u8>>,
+    pub data: Vec<u8>,
     #[serde(skip)]
-    pub directory: Option<String>,
+    pub directory: String,
     #[serde(skip)]
-    pub album_id: Option<i32>,
+    pub album_id: i32,
     #[serde(skip)]
-    pub artist_id: Option<i32>,
+    pub artist_id: i32,
     #[serde(skip)]
-    pub genre_id: Option<i32>,
+    pub genre_id: i32,
     #[serde(skip)]
-    pub coverart_id: Option<i32>,
+    pub coverart_id: i32,
+}
+
+fn is_zero(num: &i32) -> bool {
+    *num == 0
+}
+
+fn is_dur_not_set(num: &i32) -> bool {
+    *num == 0
 }
 
 impl Default for Song {
     fn default() -> Self {
         Song {
-            id: None,
-            title: None,
-            artist: None,
-            album: None,
-            album_artist: None,
-            genre: None,
-            year: None,
-            duration: None,
-            track: None,
-            disc: None,
-            disc_count: None,
-            track_count: None,
-            audio_type: None,
-            date_created: None,
-            filename: None,
-            user_id: None,
-            data: None,
-            directory: None,
-            album_id: None,
-            artist_id: None,
-            genre_id: None,
-            coverart_id: None,
+            id: 0,
+            title: String::new(),
+            artist: String::new(),
+            album: String::new(),
+            album_artist: String::new(),
+            genre: String::new(),
+            year: 0,
+            duration: 0,
+            track: 0,
+            disc: 0,
+            disc_count: 0,
+            track_count: 0,
+            audio_type: String::new(),
+            date_created: String::new(),
+            filename: String::new(),
+            user_id: 0,
+            data: Vec::new(),
+            directory: String::new(),
+            album_id: 0,
+            artist_id: 0,
+            genre_id: 0,
+            coverart_id: 0,
         }
     }
 }
@@ -69,5 +93,96 @@ impl Song {
     // TODO: Implement
     pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
         return serde_json::to_string_pretty(&self);
+    }
+}
+
+mod embedded {
+    use serde::{Deserialize, Serialize};
+
+    // The song's duration is a floating point in seconds
+    #[derive(Clone, Debug, Deserialize, Serialize)]
+    pub struct Song {
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(alias = "id")]
+        pub id: i32,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub title: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub artist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub album: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub album_artist: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub genre: String,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub year: i32,
+        #[serde(skip_serializing_if = "is_embed_dur_not_set")]
+        pub duration: f64,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub track: i32,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub disc: i32,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub disc_count: i32,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub track_count: i32,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub audio_type: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub date_created: String,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub filename: String,
+        #[serde(skip_serializing_if = "is_embed_zero")]
+        pub user_id: i32,
+        #[serde(skip)]
+        pub data: Vec<u8>,
+        #[serde(skip)]
+        pub directory: String,
+        #[serde(skip)]
+        pub album_id: i32,
+        #[serde(skip)]
+        pub artist_id: i32,
+        #[serde(skip)]
+        pub genre_id: i32,
+        #[serde(skip)]
+        pub coverart_id: i32,
+    }
+
+    fn is_embed_zero(num: &i32) -> bool {
+        *num == 0
+    }
+
+    fn is_embed_dur_not_set(num: &f64) -> bool {
+        *num == 0.0
+    }
+
+    impl Default for Song {
+        fn default() -> Self {
+            Song {
+                id: 0,
+                title: String::new(),
+                artist: String::new(),
+                album: String::new(),
+                album_artist: String::new(),
+                genre: String::new(),
+                year: 0,
+                duration: 0.0,
+                track: 0,
+                disc: 0,
+                disc_count: 0,
+                track_count: 0,
+                audio_type: String::new(),
+                date_created: String::new(),
+                filename: String::new(),
+                user_id: 0,
+                data: Vec::new(),
+                directory: String::new(),
+                album_id: 0,
+                artist_id: 0,
+                genre_id: 0,
+                coverart_id: 0,
+            }
+        }
     }
 }
