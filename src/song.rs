@@ -98,31 +98,125 @@ impl Song {
         }
     }
 
-    // TODO: Implement
-    pub fn song_path(&self) -> String {
-        return String::new();
+    pub fn song_path(&self) -> Result<String, std::io::Error> {
+        if self.directory.is_empty() {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Directory does not exist",
+            ));
+        }
+
+        let directory = &self.directory;
+        let mut buffer: String = String::from(directory.clone());
+        let lastIndex = directory.len() - 1;
+
+        if let Some(character) = directory.chars().nth(lastIndex) {
+            if character != '/' {
+                buffer += "/";
+            }
+
+            buffer += &self.filename.clone();
+
+            return Ok(buffer);
+        } else {
+            return Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                "Could not access last character of directory",
+            ));
+        }
     }
 
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path = self.song_path();
+        let pathResult = self.song_path();
 
-        let mut file = std::fs::File::open(path)?;
-        let mut buffer: Vec<u8> = Vec::new();
-        file.read_to_end(&mut buffer)?;
+        match pathResult {
+            Ok(path) => {
+                let mut file = std::fs::File::open(path)?;
+                let mut buffer: Vec<u8> = Vec::new();
+                file.read_to_end(&mut buffer)?;
 
-        if buffer.len() == 0 {
-            Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                "File is empty",
-            ))
-        } else {
-            Ok(buffer)
+                if buffer.len() == 0 {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        "File is empty",
+                    ));
+                } else {
+                    return Ok(buffer);
+                }
+            }
+            Err(er) => {
+                return Err(er);
+            }
         }
     }
 }
 
 mod embedded {
+    use std::io::Read;
+
     use serde::{Deserialize, Serialize};
+
+    impl Song {
+        pub fn to_metadata_json(&self, pretty: bool) -> Result<String, serde_json::Error> {
+            if pretty {
+                return serde_json::to_string_pretty(&self);
+            } else {
+                return serde_json::to_string(&self);
+            }
+        }
+
+        pub fn song_path(&self) -> Result<String, std::io::Error> {
+            if self.directory.is_empty() {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "Directory does not exist",
+                ));
+            }
+
+            let directory = &self.directory;
+            let mut buffer: String = String::from(directory.clone());
+            let lastIndex = directory.len() - 1;
+
+            if let Some(character) = directory.chars().nth(lastIndex) {
+                if character != '/' {
+                    buffer += "/";
+                }
+
+                buffer += &self.filename.clone();
+
+                return Ok(buffer);
+            } else {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "Could not access last character of directory",
+                ));
+            }
+        }
+
+        pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
+            let pathResult = self.song_path();
+
+            match pathResult {
+                Ok(path) => {
+                    let mut file = std::fs::File::open(path)?;
+                    let mut buffer: Vec<u8> = Vec::new();
+                    file.read_to_end(&mut buffer)?;
+
+                    if buffer.len() == 0 {
+                        return Err(std::io::Error::new(
+                            std::io::ErrorKind::Other,
+                            "File is empty",
+                        ));
+                    } else {
+                        return Ok(buffer);
+                    }
+                }
+                Err(er) => {
+                    return Err(er);
+                }
+            }
+        }
+    }
 
     // The song's duration is a floating point in seconds
     #[derive(Clone, Debug, Deserialize, Serialize)]
