@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - version
   - deploy
 
 build:
@@ -51,6 +52,7 @@ extract_version:
   artifacts:
     reports:
       dotenv: version.env
+
 tag_release:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/release-cli:latest
