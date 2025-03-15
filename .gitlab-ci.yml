@@ -47,6 +47,8 @@ extract_version:
   script:
     - apk add --no-cache jq
     - VERSION=$(grep 'version = "' Cargo.toml | awk -F'"' '{print $2}' | head -n 1)
+    - VER_HASH=${CI_COMMIT_SHA:0:5}
+    - VERSION="$VERSION-$VER_HASH"
     - if [ $? -ne 0 ]; then echo "Error extracting version"; exit 1; fi
     - echo "Extracted version is"
     - echo "$VERSION"
