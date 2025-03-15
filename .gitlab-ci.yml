@@ -63,7 +63,7 @@ tag_release:
   dependencies:
     - extract_version
   script:
-    - release-cli create --name "Release v$VERSION" --tag-name "v$VERSION"
+    - release-cli create --name "Release $CI_COMMIT_BRANCH-v$VERSION" --tag-name "$CI_COMMIT_BRANCH-v$VERSION"
 
 deploy:
   stage: deploy
