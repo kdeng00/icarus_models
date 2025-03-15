@@ -1,9 +1,9 @@
 [package]
 name = "icarus-models"
-description = "models used for the icarus project"
-license = "MIT"
 version = "0.1.7"
 edition = "2024"
+description = "models used for the icarus project"
+license = "MIT"
 
 [dependencies]
 serde = { version = "1.0.218", features = ["derive"] }
