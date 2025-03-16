@@ -108,9 +108,9 @@ impl Song {
 
         let directory = &self.directory;
         let mut buffer: String = String::from(directory.clone());
-        let lastIndex = directory.len() - 1;
+        let last_index = directory.len() - 1;
 
-        if let Some(character) = directory.chars().nth(lastIndex) {
+        if let Some(character) = directory.chars().nth(last_index) {
             if character != '/' {
                 buffer += "/";
             }
@@ -127,9 +127,9 @@ impl Song {
     }
 
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let pathResult = self.song_path();
+        let path_result = self.song_path();
 
-        match pathResult {
+        match path_result {
             Ok(path) => {
                 let mut file = std::fs::File::open(path)?;
                 let mut buffer: Vec<u8> = Vec::new();
@@ -175,9 +175,9 @@ mod embedded {
 
             let directory = &self.directory;
             let mut buffer: String = String::from(directory.clone());
-            let lastIndex = directory.len() - 1;
+            let last_index = directory.len() - 1;
 
-            if let Some(character) = directory.chars().nth(lastIndex) {
+            if let Some(character) = directory.chars().nth(last_index) {
                 if character != '/' {
                     buffer += "/";
                 }
@@ -194,9 +194,9 @@ mod embedded {
         }
 
         pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-            let pathResult = self.song_path();
+            let path_result = self.song_path();
 
-            match pathResult {
+            match path_result {
                 Ok(path) => {
                     let mut file = std::fs::File::open(path)?;
                     let mut buffer: Vec<u8> = Vec::new();
