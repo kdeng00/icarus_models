@@ -1,4 +1,5 @@
 pub mod access_level;
+pub mod album;
 pub mod constants;
 pub mod login_result;
 pub mod song;
