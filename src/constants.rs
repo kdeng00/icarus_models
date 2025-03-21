@@ -1,5 +1,5 @@
-pub const DEFAULT_MUSIC_EXTENSION: &str = FLAC_EXTENSION;
-pub const FLAC_EXTENSION: &str = ".flac";
-pub const WAV_EXTENSION: &str = ".wav";
-pub const MPTHREE_EXTENSION: &str = ".mp3";
-pub const JPG_EXTENSION: &str = ".jpg";
+pub const DEFAULTMUSICEXTENSION: &str = FLACEXTENSION;
+pub const FLACEXTENSION: &str = ".flac";
+pub const WAVEXTENSION: &str = ".wav";
+pub const MPTHREEEXTENSION: &str = ".mp3";
+pub const JPGEXTENSION: &str = ".jpg";

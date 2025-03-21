@@ -1,9 +1,8 @@
-use std::default::Default;
-
-mod types {
+pub mod types {
     pub enum Types {
-        WAV_EXTENSION,
-        FLAC_EXTENSION,
-        MP_EXTENSION,
+        DefaultMusicExtension,
+        WavExtension,
+        FlacExtension,
+        MPThreeExtension,
     }
 }

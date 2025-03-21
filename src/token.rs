@@ -58,7 +58,13 @@ impl Token {
     }
 
     // TODO: Implement
-    pub fn contains_scope(&self, des_scope: String) -> bool {
+    pub fn contains_scope(&self, des_scope: &String) -> bool {
+        let extracted_token: String = String::from("Token");
+
+        if extracted_token == *des_scope {
+            return true;
+        }
+
         return false;
     }
 }

@@ -1,6 +1,10 @@
 use std::default::Default;
 use std::io::Read;
 
+use crate::constants;
+use crate::types;
+
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -42,14 +46,14 @@ pub struct Song {
     pub data: Vec<u8>,
     #[serde(skip)]
     pub directory: String,
-    #[serde(skip)]
-    pub album_id: i32,
-    #[serde(skip)]
-    pub artist_id: i32,
-    #[serde(skip)]
-    pub genre_id: i32,
-    #[serde(skip)]
-    pub coverart_id: i32,
+    // #[serde(skip)]
+    // pub album_id: i32,
+    // #[serde(skip)]
+    // pub artist_id: i32,
+    // #[serde(skip)]
+    // pub genre_id: i32,
+    // #[serde(skip)]
+    // pub coverart_id: i32,
 }
 
 fn is_zero(num: &i32) -> bool {
@@ -81,10 +85,10 @@ impl Default for Song {
             user_id: 0,
             data: Vec::new(),
             directory: String::new(),
-            album_id: 0,
-            artist_id: 0,
-            genre_id: 0,
-            coverart_id: 0,
+            // album_id: 0,
+            // artist_id: 0,
+            // genre_id: 0,
+            // coverart_id: 0,
         }
     }
 }
@@ -108,9 +112,9 @@ impl Song {
 
         let directory = &self.directory;
         let mut buffer: String = String::from(directory.clone());
-        let lastIndex = directory.len() - 1;
+        let last_index = directory.len() - 1;
 
-        if let Some(character) = directory.chars().nth(lastIndex) {
+        if let Some(character) = directory.chars().nth(last_index) {
             if character != '/' {
                 buffer += "/";
             }
@@ -127,9 +131,9 @@ impl Song {
     }
 
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let pathResult = self.song_path();
+        let path_result = self.song_path();
 
-        match pathResult {
+        match path_result {
             Ok(path) => {
                 let mut file = std::fs::File::open(path)?;
                 let mut buffer: Vec<u8> = Vec::new();
@@ -148,6 +152,45 @@ impl Song {
                 return Err(er);
             }
         }
+    }
+
+    pub fn generate_filename(&self, typ: types::types::Types, randomize: bool) -> String {
+        let mut filename: String = String::new();
+        let filename_len = 10;
+
+        let file_extension = match typ {
+            types::types::Types::DefaultMusicExtension => {
+                String::from(constants::DEFAULTMUSICEXTENSION)
+            }
+
+            types::types::Types::WavExtension => String::from(constants::WAVEXTENSION),
+            types::types::Types::FlacExtension => String::from(constants::FLACEXTENSION),
+            types::types::Types::MPThreeExtension => String::from(constants::MPTHREEEXTENSION),
+        };
+
+        if randomize {
+            let some_chars: String = String::from("abcdefghij0123456789");
+            let mut rng = rand::thread_rng();
+
+            for _i in 0..filename_len {
+                let random_number: i32 = rng.gen_range(0..=19);
+                let index = random_number as usize;
+                let rando_char = some_chars.chars().nth(index);
+
+                match rando_char {
+                    Some(c) => {
+                        filename.push(c);
+                    }
+                    None => {}
+                };
+            }
+        } else {
+            filename += "track-output";
+        }
+
+        filename += &file_extension;
+
+        return filename;
     }
 }
 
@@ -175,9 +218,9 @@ mod embedded {
 
             let directory = &self.directory;
             let mut buffer: String = String::from(directory.clone());
-            let lastIndex = directory.len() - 1;
+            let last_index = directory.len() - 1;
 
-            if let Some(character) = directory.chars().nth(lastIndex) {
+            if let Some(character) = directory.chars().nth(last_index) {
                 if character != '/' {
                     buffer += "/";
                 }
@@ -194,9 +237,9 @@ mod embedded {
         }
 
         pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-            let pathResult = self.song_path();
+            let path_result = self.song_path();
 
-            match pathResult {
+            match path_result {
                 Ok(path) => {
                     let mut file = std::fs::File::open(path)?;
                     let mut buffer: Vec<u8> = Vec::new();
@@ -258,14 +301,14 @@ mod embedded {
         pub data: Vec<u8>,
         #[serde(skip)]
         pub directory: String,
-        #[serde(skip)]
-        pub album_id: i32,
-        #[serde(skip)]
-        pub artist_id: i32,
-        #[serde(skip)]
-        pub genre_id: i32,
-        #[serde(skip)]
-        pub coverart_id: i32,
+        // #[serde(skip)]
+        // pub album_id: i32,
+        // #[serde(skip)]
+        // pub artist_id: i32,
+        // #[serde(skip)]
+        // pub genre_id: i32,
+        // #[serde(skip)]
+        // pub coverart_id: i32,
     }
 
     fn is_embed_zero(num: &i32) -> bool {
@@ -297,10 +340,10 @@ mod embedded {
                 user_id: 0,
                 data: Vec::new(),
                 directory: String::new(),
-                album_id: 0,
-                artist_id: 0,
-                genre_id: 0,
-                coverart_id: 0,
+                // album_id: 0,
+                // artist_id: 0,
+                // genre_id: 0,
+                // coverart_id: 0,
             }
         }
     }
