@@ -1,4 +1,4 @@
-use std::default::Default;
+// use std::default::Default;
 use std::io::Read;
 
 use crate::constants;
@@ -64,6 +64,7 @@ fn is_dur_not_set(num: &i32) -> bool {
     *num == 0
 }
 
+/*
 impl Default for Song {
     fn default() -> Self {
         Song {
@@ -92,13 +93,14 @@ impl Default for Song {
         }
     }
 }
+*/
 
 impl Song {
     pub fn to_metadata_json(&self, pretty: bool) -> Result<String, serde_json::Error> {
         if pretty {
-            return serde_json::to_string_pretty(&self);
+            serde_json::to_string_pretty(&self)
         } else {
-            return serde_json::to_string(&self);
+            serde_json::to_string(&self)
         }
     }
 
@@ -111,7 +113,7 @@ impl Song {
         }
 
         let directory = &self.directory;
-        let mut buffer: String = String::from(directory.clone());
+        let mut buffer: String = directory.clone();
         let last_index = directory.len() - 1;
 
         if let Some(character) = directory.chars().nth(last_index) {
@@ -121,12 +123,12 @@ impl Song {
 
             buffer += &self.filename.clone();
 
-            return Ok(buffer);
+            Ok(buffer)
         } else {
-            return Err(std::io::Error::new(
+            Err(std::io::Error::new(
                 std::io::ErrorKind::Other,
                 "Could not access last character of directory",
-            ));
+            ))
         }
     }
 
@@ -139,50 +141,45 @@ impl Song {
                 let mut buffer: Vec<u8> = Vec::new();
                 file.read_to_end(&mut buffer)?;
 
-                if buffer.len() == 0 {
-                    return Err(std::io::Error::new(
+                if buffer.is_empty() {
+                    Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
                         "File is empty",
-                    ));
+                    ))
                 } else {
-                    return Ok(buffer);
+                    Ok(buffer)
                 }
             }
-            Err(er) => {
-                return Err(er);
-            }
+            Err(er) => Err(er),
         }
     }
 
-    pub fn generate_filename(&self, typ: types::types::Types, randomize: bool) -> String {
+    pub fn generate_filename(&self, typ: types::MusicTypes, randomize: bool) -> String {
         let mut filename: String = String::new();
         let filename_len = 10;
 
         let file_extension = match typ {
-            types::types::Types::DefaultMusicExtension => {
+            types::MusicTypes::DefaultMusicExtension => {
                 String::from(constants::DEFAULTMUSICEXTENSION)
             }
 
-            types::types::Types::WavExtension => String::from(constants::WAVEXTENSION),
-            types::types::Types::FlacExtension => String::from(constants::FLACEXTENSION),
-            types::types::Types::MPThreeExtension => String::from(constants::MPTHREEEXTENSION),
+            types::MusicTypes::WavExtension => String::from(constants::WAVEXTENSION),
+            types::MusicTypes::FlacExtension => String::from(constants::FLACEXTENSION),
+            types::MusicTypes::MPThreeExtension => String::from(constants::MPTHREEEXTENSION),
         };
 
         if randomize {
             let some_chars: String = String::from("abcdefghij0123456789");
-            let mut rng = rand::thread_rng();
+            let mut rng = rand::rng();
 
             for _i in 0..filename_len {
-                let random_number: i32 = rng.gen_range(0..=19);
+                let random_number: i32 = rng.random_range(0..=19);
                 let index = random_number as usize;
                 let rando_char = some_chars.chars().nth(index);
 
-                match rando_char {
-                    Some(c) => {
-                        filename.push(c);
-                    }
-                    None => {}
-                };
+                if let Some(c) = rando_char {
+                    filename.push(c);
+                }
             }
         } else {
             filename += "track-output";
@@ -190,10 +187,11 @@ impl Song {
 
         filename += &file_extension;
 
-        return filename;
+        filename
     }
 }
 
+/*
 mod embedded {
     use std::io::Read;
 
@@ -202,9 +200,9 @@ mod embedded {
     impl Song {
         pub fn to_metadata_json(&self, pretty: bool) -> Result<String, serde_json::Error> {
             if pretty {
-                return serde_json::to_string_pretty(&self);
+                serde_json::to_string_pretty(&self)
             } else {
-                return serde_json::to_string(&self);
+                serde_json::to_string(&self)
             }
         }
 
@@ -217,7 +215,7 @@ mod embedded {
             }
 
             let directory = &self.directory;
-            let mut buffer: String = String::from(directory.clone());
+            let mut buffer: String = directory.clone();
             let last_index = directory.len() - 1;
 
             if let Some(character) = directory.chars().nth(last_index) {
@@ -227,12 +225,12 @@ mod embedded {
 
                 buffer += &self.filename.clone();
 
-                return Ok(buffer);
+                Ok(buffer)
             } else {
-                return Err(std::io::Error::new(
+                Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
                     "Could not access last character of directory",
-                ));
+                ))
             }
         }
 
@@ -245,18 +243,16 @@ mod embedded {
                     let mut buffer: Vec<u8> = Vec::new();
                     file.read_to_end(&mut buffer)?;
 
-                    if buffer.len() == 0 {
-                        return Err(std::io::Error::new(
+                    if buffer.is_empty() {
+                        Err(std::io::Error::new(
                             std::io::ErrorKind::Other,
                             "File is empty",
-                        ));
+                        ))
                     } else {
-                        return Ok(buffer);
+                        Ok(buffer)
                     }
                 }
-                Err(er) => {
-                    return Err(er);
-                }
+                Err(er) => Err(er),
             }
         }
     }
@@ -348,3 +344,4 @@ mod embedded {
         }
     }
 }
+*/

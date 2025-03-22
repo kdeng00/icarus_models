@@ -43,18 +43,18 @@ impl AccessToken {
     pub fn bearer_token(&self) -> String {
         let mut token: String = String::from("Bearer ");
         token += &self.token.clone();
-        return token;
+        token
     }
 }
 
 impl Token {
     pub fn _to_json(&self) -> Result<String, serde_json::Error> {
-        return serde_json::to_string_pretty(&self);
+        serde_json::to_string_pretty(&self)
     }
 
     // TODO: Implement
     pub fn token_expired(&self) -> bool {
-        return false;
+        false
     }
 
     // TODO: Implement
@@ -65,6 +65,6 @@ impl Token {
             return true;
         }
 
-        return false;
+        false
     }
 }

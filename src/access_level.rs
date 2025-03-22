@@ -20,23 +20,23 @@ impl Default for AccessLevel {
 }
 
 pub fn default_level() -> AccessLevel {
-    return AccessLevel {
+    AccessLevel {
         id: -1,
         level: String::from("Public"),
         song_id: -1,
-    };
+    }
 }
 
 pub fn private_level() -> AccessLevel {
-    return AccessLevel {
+    AccessLevel {
         id: -1,
         level: String::from("Private"),
         song_id: -1,
-    };
+    }
 }
 
 impl AccessLevel {
     pub fn _to_json(&self) -> Result<String, serde_json::Error> {
-        return serde_json::to_string_pretty(&self);
+        serde_json::to_string_pretty(&self)
     }
 }

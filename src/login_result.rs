@@ -26,6 +26,6 @@ impl Default for LoginResult {
 
 impl LoginResult {
     pub fn _to_json(&self) -> Result<String, serde_json::Error> {
-        return serde_json::to_string_pretty(&self);
+        serde_json::to_string_pretty(&self)
     }
 }

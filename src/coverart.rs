@@ -16,12 +16,8 @@ impl CoverArt {
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
         match file.read_to_end(&mut buffer) {
-            Ok(_) => {
-                return Ok(buffer);
-            }
-            Err(err) => {
-                return Err(err);
-            }
+            Ok(_) => Ok(buffer),
+            Err(err) => Err(err),
         }
     }
 }
