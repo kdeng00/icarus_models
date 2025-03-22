@@ -52,9 +52,9 @@ impl Default for User {
 impl User {
     pub fn to_json(&self, output_pretty: bool) -> Result<String, serde_json::Error> {
         if output_pretty {
-            return serde_json::to_string_pretty(&self);
+            serde_json::to_string_pretty(&self)
         } else {
-            return serde_json::to_string(&self);
+            serde_json::to_string(&self)
         }
     }
 }

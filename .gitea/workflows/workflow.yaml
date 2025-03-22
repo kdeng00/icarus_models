@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main 
-      - dev
+      - devel
   pull_request:
     branches:
       - main 
-      - dev
+      - devel
 
 jobs:
   check:
@@ -17,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.85.0
       - run: cargo check
 
   test:
@@ -25,6 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.85.0
       - run: cargo test
 
   fmt:
@@ -33,6 +37,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.85.0
       - run: rustup component add rustfmt
       - run: cargo fmt --all -- --check
 
@@ -42,6 +48,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.85.0
       - run: rustup component add clippy
       - run: cargo clippy -- -D warnings
 
@@ -51,6 +59,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: 1.85.0
       - run: cargo build
 
 
