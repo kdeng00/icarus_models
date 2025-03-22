@@ -1,19 +1,13 @@
-mod song_tests {
+mod utils {
     use std::fs;
-    use std::fs::File;
-    use std::io::{Read, Write};
+    use std::io::Read;
     use std::path::Path;
 
-    use tempfile::tempdir;
-
-    use icarus_models::song;
-    use icarus_models::types;
-
-    fn get_tests_directory() -> String {
+    pub fn get_tests_directory() -> String {
         String::from(env!("CARGO_MANIFEST_DIR").to_owned() + "/tests/")
     }
 
-    fn does_directory_exists(directory: &String) -> bool {
+    pub fn does_directory_exists(directory: &String) -> bool {
         let path = Path::new(directory);
         if let Ok(dir_i) = fs::metadata(path) {
             dir_i.is_dir()
@@ -22,7 +16,7 @@ mod song_tests {
         }
     }
 
-    fn extract_data_from_file(filepath: &String) -> Result<Vec<u8>, std::io::Error> {
+    pub fn extract_data_from_file(filepath: &String) -> Result<Vec<u8>, std::io::Error> {
         match std::fs::File::open(filepath) {
             Ok(mut file) => {
                 let mut buffer: Vec<u8> = Vec::new();
@@ -32,6 +26,18 @@ mod song_tests {
             Err(err) => Err(err),
         }
     }
+}
+
+mod song_tests {
+    use std::fs::File;
+    use std::io::Write;
+
+    use tempfile::tempdir;
+
+    use icarus_models::song;
+    use icarus_models::types;
+
+    use crate::utils;
 
     #[test]
     fn test_song_to_data() {
@@ -43,18 +49,18 @@ mod song_tests {
 
         println!("Getting track");
         let mut song = song::Song::default();
-        song.directory = get_tests_directory();
+        song.directory = utils::get_tests_directory();
         song.filename = String::from("track01.flac");
 
         assert!(
-            does_directory_exists(&song.directory),
+            utils::does_directory_exists(&song.directory),
             "Directory does not exist"
         );
 
         println!("Directory: {}", song.directory);
 
         match song.song_path() {
-            Ok(filepath) => match extract_data_from_file(&filepath) {
+            Ok(filepath) => match utils::extract_data_from_file(&filepath) {
                 Ok(buffer) => {
                     assert_eq!(buffer.is_empty(), false);
 
@@ -81,11 +87,11 @@ mod song_tests {
     #[test]
     fn test_song_path_check() {
         let mut song = song::Song::default();
-        song.directory = get_tests_directory();
+        song.directory = utils::get_tests_directory();
         song.filename = String::from("track01.flac");
 
         assert!(
-            does_directory_exists(&song.directory),
+            utils::does_directory_exists(&song.directory),
             "Directory does not exist"
         );
     }
@@ -93,11 +99,11 @@ mod song_tests {
     #[test]
     fn test_song_generate_filename() {
         let mut song = song::Song::default();
-        song.directory = get_tests_directory();
+        song.directory = utils::get_tests_directory();
         song.filename = String::from("track01.flac");
 
         match song.song_path() {
-            Ok(songpath) => match extract_data_from_file(&songpath) {
+            Ok(songpath) => match utils::extract_data_from_file(&songpath) {
                 Ok(buffer) => {
                     let mut song_cpy = song.clone();
                     let temp_dir = tempdir().expect("Failed to create temp dir");
@@ -140,6 +146,33 @@ mod song_tests {
             },
             Err(err) => {
                 assert!(false, "Error extracting song data: {:?}", err);
+            }
+        }
+    }
+}
+
+mod album_tests {
+
+    use crate::utils;
+    use icarus_models::album;
+
+    #[test]
+    fn parse_album() {
+        let test_dir = utils::get_tests_directory();
+        if utils::does_directory_exists(&test_dir) {
+            let album_file: String = test_dir + &String::from("album.json");
+            println!("Album file: {:?}", album_file);
+
+            match album::collection::parse_album(&album_file) {
+                Ok(album) => {
+                    println!("Album title: {}", album.title);
+                    assert_eq!(album.title.is_empty(), false);
+                    assert_eq!(album.artist.is_empty(), false);
+                    assert_eq!(album.tracks.is_empty(), false);
+                }
+                Err(err) => {
+                    assert!(false, "Error parsing album json file: {:?}", err);
+                }
             }
         }
     }
