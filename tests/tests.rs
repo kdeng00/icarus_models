@@ -1,0 +1,146 @@
+mod song_tests {
+    use std::fs;
+    use std::fs::File;
+    use std::io::{Read, Write};
+    use std::path::Path;
+
+    use tempfile::tempdir;
+
+    use icarus_models::song;
+    use icarus_models::types;
+
+    fn get_tests_directory() -> String {
+        String::from(env!("CARGO_MANIFEST_DIR").to_owned() + "/tests/")
+    }
+
+    fn does_directory_exists(directory: &String) -> bool {
+        let path = Path::new(directory);
+        if let Ok(dir_i) = fs::metadata(path) {
+            dir_i.is_dir()
+        } else {
+            false
+        }
+    }
+
+    fn extract_data_from_file(filepath: &String) -> Result<Vec<u8>, std::io::Error> {
+        match std::fs::File::open(filepath) {
+            Ok(mut file) => {
+                let mut buffer: Vec<u8> = Vec::new();
+                let _ = file.read_to_end(&mut buffer);
+                Ok(buffer)
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    #[test]
+    fn test_song_to_data() {
+        println!("Test");
+        let some_val = true;
+
+        println!("Checking if some_val is true");
+        assert_eq!(true, some_val);
+
+        println!("Getting track");
+        let mut song = song::Song::default();
+        song.directory = get_tests_directory();
+        song.filename = String::from("track01.flac");
+
+        assert!(
+            does_directory_exists(&song.directory),
+            "Directory does not exist"
+        );
+
+        println!("Directory: {}", song.directory);
+
+        match song.song_path() {
+            Ok(filepath) => match extract_data_from_file(&filepath) {
+                Ok(buffer) => {
+                    assert_eq!(buffer.is_empty(), false);
+
+                    match song.to_data() {
+                        Ok(song_data) => {
+                            println!("Both files match");
+                            assert_eq!(buffer, song_data);
+                        }
+                        Err(err) => {
+                            assert!(false, "Error producing song data: {:?}", err);
+                        }
+                    };
+                }
+                Err(err) => {
+                    assert!(false, "Failed to open file: {:?}", err);
+                }
+            },
+            Err(err) => {
+                assert!(false, "Could not get song path: {:?}", err);
+            }
+        }
+    }
+
+    #[test]
+    fn test_song_path_check() {
+        let mut song = song::Song::default();
+        song.directory = get_tests_directory();
+        song.filename = String::from("track01.flac");
+
+        assert!(
+            does_directory_exists(&song.directory),
+            "Directory does not exist"
+        );
+    }
+
+    #[test]
+    fn test_song_generate_filename() {
+        let mut song = song::Song::default();
+        song.directory = get_tests_directory();
+        song.filename = String::from("track01.flac");
+
+        match song.song_path() {
+            Ok(songpath) => match extract_data_from_file(&songpath) {
+                Ok(buffer) => {
+                    let mut song_cpy = song.clone();
+                    let temp_dir = tempdir().expect("Failed to create temp dir");
+                    song_cpy.directory = match temp_dir.path().to_str() {
+                        Some(s) => String::from(s),
+                        None => String::new(),
+                    };
+
+                    assert_eq!(song.directory.is_empty(), false);
+                    song_cpy.filename =
+                        song.generate_filename(types::MusicTypes::FlacExtension, true);
+                    println!("Directory: {:?}", song_cpy.directory);
+                    println!("File to be created: {:?}", song_cpy.filename);
+
+                    let path = match song_cpy.song_path() {
+                        Ok(s_path) => s_path,
+                        Err(err) => {
+                            assert!(false, "Error: {:?}", err);
+                            String::new()
+                        }
+                    };
+
+                    match File::create(path) {
+                        Ok(mut file_cpy) => match file_cpy.write_all(&buffer) {
+                            Ok(success) => {
+                                println!("Success: {:?}", success);
+                            }
+                            Err(err) => {
+                                assert!(false, "Error saving file: {:?}", err);
+                            }
+                        },
+                        Err(err) => {
+                            assert!(false, "Error: {:?}", err);
+                        }
+                    };
+                }
+                Err(err) => {
+                    assert!(false, "Error: {:?}", err);
+                }
+            },
+            Err(err) => {
+                assert!(false, "Error extracting song data: {:?}", err);
+            }
+        }
+    }
+}

@@ -1,4 +1,3 @@
-// use std::default::Default;
 use std::io::Read;
 
 use crate::constants;
@@ -7,7 +6,7 @@ use crate::types;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Song {
     #[serde(skip_serializing_if = "is_zero")]
     #[serde(alias = "id")]
@@ -63,37 +62,6 @@ fn is_zero(num: &i32) -> bool {
 fn is_dur_not_set(num: &i32) -> bool {
     *num == 0
 }
-
-/*
-impl Default for Song {
-    fn default() -> Self {
-        Song {
-            id: 0,
-            title: String::new(),
-            artist: String::new(),
-            album: String::new(),
-            album_artist: String::new(),
-            genre: String::new(),
-            year: 0,
-            duration: 0,
-            track: 0,
-            disc: 0,
-            disc_count: 0,
-            track_count: 0,
-            audio_type: String::new(),
-            date_created: String::new(),
-            filename: String::new(),
-            user_id: 0,
-            data: Vec::new(),
-            directory: String::new(),
-            // album_id: 0,
-            // artist_id: 0,
-            // genre_id: 0,
-            // coverart_id: 0,
-        }
-    }
-}
-*/
 
 impl Song {
     pub fn to_metadata_json(&self, pretty: bool) -> Result<String, serde_json::Error> {
