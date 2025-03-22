@@ -41,7 +41,7 @@ jobs:
         id: Version
         run: |
           echo "Printing version"
-          echo "Version: ${{ steps.setvar.outputs.project_tag_release }}"
+          echo "Version: ${{ steps.version.outputs.project_tag_release }}"
       # - name: Create GitHub Release
         # uses: actions/create-release@v1
         # env:
