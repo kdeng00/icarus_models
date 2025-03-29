@@ -128,12 +128,18 @@ impl Song {
 
         let file_extension = match typ {
             types::MusicTypes::DefaultMusicExtension => {
-                String::from(constants::DEFAULTMUSICEXTENSION)
+                String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
             }
 
-            types::MusicTypes::WavExtension => String::from(constants::WAVEXTENSION),
-            types::MusicTypes::FlacExtension => String::from(constants::FLACEXTENSION),
-            types::MusicTypes::MPThreeExtension => String::from(constants::MPTHREEEXTENSION),
+            types::MusicTypes::WavExtension => {
+                String::from(constants::file_extensions::audio::WAVEXTENSION)
+            }
+            types::MusicTypes::FlacExtension => {
+                String::from(constants::file_extensions::audio::FLACEXTENSION)
+            }
+            types::MusicTypes::MPThreeExtension => {
+                String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
+            }
         };
 
         if randomize {
