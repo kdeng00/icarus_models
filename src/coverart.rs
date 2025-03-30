@@ -2,7 +2,7 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CoverArt {
     pub id: i32,
     pub title: String,
