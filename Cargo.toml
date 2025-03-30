@@ -1,6 +1,6 @@
 [package]
 name = "icarus_models"
-version = "0.1.14"
+version = "0.2.0"
 edition = "2024"
 description = "models used for the icarus project"
 license = "MIT"
