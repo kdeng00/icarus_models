@@ -15,7 +15,7 @@ pub struct LoginResult {
 impl Default for LoginResult {
     fn default() -> Self {
         LoginResult {
-            id: uuid::Uuid::new_v4(),
+            id: uuid::Uuid::nil(),
             username: String::new(),
             token: String::new(),
             token_type: String::new(),

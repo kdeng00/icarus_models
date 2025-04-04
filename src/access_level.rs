@@ -12,7 +12,7 @@ pub struct AccessLevel {
 impl Default for AccessLevel {
     fn default() -> Self {
         AccessLevel {
-            id: uuid::Uuid::new_v4(),
+            id: uuid::Uuid::nil(),
             level: String::new(),
             song_id: uuid::Uuid::new_v4(),
         }
@@ -21,7 +21,7 @@ impl Default for AccessLevel {
 
 pub fn default_level() -> AccessLevel {
     AccessLevel {
-        id: uuid::Uuid::new_v4(),
+        id: uuid::Uuid::nil(),
         level: String::from("Public"),
         song_id: uuid::Uuid::new_v4(),
     }

@@ -227,9 +227,9 @@ mod embedded {
     // The song's duration is a floating point in seconds
     #[derive(Clone, Debug, Deserialize, Serialize)]
     pub struct Song {
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_uuid_nil")]
         #[serde(alias = "id")]
-        pub id: i32,
+        pub id: uuid::Uuid,
         #[serde(skip_serializing_if = "String::is_empty")]
         pub title: String,
         #[serde(skip_serializing_if = "String::is_empty")]
@@ -240,17 +240,17 @@ mod embedded {
         pub album_artist: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         pub genre: String,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub year: i32,
-        #[serde(skip_serializing_if = "is_embed_dur_not_set")]
+        #[serde(skip_serializing_if = "init::is_embed_dur_not_set")]
         pub duration: f64,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub track: i32,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub disc: i32,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub disc_count: i32,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub track_count: i32,
         #[serde(skip_serializing_if = "String::is_empty")]
         pub audio_type: String,
@@ -258,7 +258,7 @@ mod embedded {
         pub date_created: String,
         #[serde(skip_serializing_if = "String::is_empty")]
         pub filename: String,
-        #[serde(skip_serializing_if = "is_embed_zero")]
+        #[serde(skip_serializing_if = "init::is_embed_zero")]
         pub user_id: i32,
         #[serde(skip)]
         pub data: Vec<u8>,
@@ -274,18 +274,11 @@ mod embedded {
         // pub coverart_id: i32,
     }
 
-    fn is_embed_zero(num: &i32) -> bool {
-        *num == 0
-    }
-
-    fn is_embed_dur_not_set(num: &f64) -> bool {
-        *num == 0.0
-    }
 
     impl Default for Song {
         fn default() -> Self {
             Song {
-                id: 0,
+                id: uuid::Uuid::nil(),
                 title: String::new(),
                 artist: String::new(),
                 album: String::new(),

@@ -28,6 +28,7 @@ mod utils {
     }
 }
 
+#[cfg(test)]
 mod song_tests {
     use std::fs::File;
     use std::io::Write;
@@ -151,6 +152,7 @@ mod song_tests {
     }
 }
 
+#[cfg(test)]
 mod album_tests {
 
     use crate::utils;
