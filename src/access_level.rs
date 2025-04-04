@@ -4,34 +4,34 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AccessLevel {
-    pub id: i32,
+    pub id: uuid::Uuid,
     pub level: String,
-    pub song_id: i32,
+    pub song_id: uuid::Uuid,
 }
 
 impl Default for AccessLevel {
     fn default() -> Self {
         AccessLevel {
-            id: -1,
+            id: uuid::Uuid::new_v4(),
             level: String::new(),
-            song_id: -1,
+            song_id: uuid::Uuid::new_v4(),
         }
     }
 }
 
 pub fn default_level() -> AccessLevel {
     AccessLevel {
-        id: -1,
+        id: uuid::Uuid::new_v4(),
         level: String::from("Public"),
-        song_id: -1,
+        song_id: uuid::Uuid::new_v4(),
     }
 }
 
 pub fn private_level() -> AccessLevel {
     AccessLevel {
-        id: -1,
+        id: uuid::Uuid::new_v4(),
         level: String::from("Private"),
-        song_id: -1,
+        song_id: uuid::Uuid::new_v4(),
     }
 }
 

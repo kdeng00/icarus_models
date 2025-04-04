@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CoverArt {
-    pub id: i32,
+    pub id: uuid::Uuid,
     pub title: String,
     pub path: String,
     pub data: Vec<u8>,

@@ -1,6 +1,7 @@
 use std::io::Read;
 
 use crate::constants;
+use crate::init;
 use crate::types;
 
 use rand::Rng;
@@ -8,9 +9,9 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Song {
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_uuid_nil")]
     #[serde(alias = "id")]
-    pub id: i32,
+    pub id: uuid::Uuid,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub title: String,
     #[serde(skip_serializing_if = "String::is_empty")]
@@ -21,17 +22,17 @@ pub struct Song {
     pub album_artist: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub genre: String,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub year: i32,
-    #[serde(skip_serializing_if = "is_dur_not_set")]
+    #[serde(skip_serializing_if = "init::is_dur_not_set")]
     pub duration: i32,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub track: i32,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub disc: i32,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub disc_count: i32,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub track_count: i32,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub audio_type: String,
@@ -39,7 +40,7 @@ pub struct Song {
     pub date_created: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub filename: String,
-    #[serde(skip_serializing_if = "is_zero")]
+    #[serde(skip_serializing_if = "init::is_zero")]
     pub user_id: i32,
     #[serde(skip)]
     pub data: Vec<u8>,
@@ -53,14 +54,6 @@ pub struct Song {
     // pub genre_id: i32,
     // #[serde(skip)]
     // pub coverart_id: i32,
-}
-
-fn is_zero(num: &i32) -> bool {
-    *num == 0
-}
-
-fn is_dur_not_set(num: &i32) -> bool {
-    *num == 0
 }
 
 impl Song {

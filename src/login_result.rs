@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct LoginResult {
-    pub id: i32,
+    pub id: uuid::Uuid,
     pub username: String,
     pub token: String,
     #[serde(alias = "token_type")]
@@ -15,7 +15,7 @@ pub struct LoginResult {
 impl Default for LoginResult {
     fn default() -> Self {
         LoginResult {
-            id: -1,
+            id: uuid::Uuid::new_v4(),
             username: String::new(),
             token: String::new(),
             token_type: String::new(),
