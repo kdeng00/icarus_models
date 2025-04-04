@@ -40,8 +40,8 @@ pub struct Song {
     pub date_created: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub filename: String,
-    #[serde(skip_serializing_if = "init::is_zero")]
-    pub user_id: i32,
+    #[serde(skip_serializing_if = "init::is_uuid_nil")]
+    pub user_id: uuid::Uuid,
     #[serde(skip)]
     pub data: Vec<u8>,
     #[serde(skip)]
