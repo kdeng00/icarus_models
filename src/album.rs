@@ -5,9 +5,7 @@ pub mod collection {
     use std::fs::File;
     use std::io::BufReader;
 
-    fn is_set(num: &i32) -> bool {
-        *num >= 0
-    }
+    use crate::init;
 
     pub fn parse_album(filepath: &String) -> Result<Album, serde_json::Error> {
         let file = File::open(filepath).expect("Failed to open file");
@@ -27,7 +25,7 @@ pub mod collection {
         pub genre: String,
         pub year: i32,
         pub track_count: i32,
-        #[serde(skip_serializing_if = "is_set")]
+        #[serde(skip_serializing_if = "init::is_set")]
         pub disc_count: i32,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         pub tracks: Vec<Track>,

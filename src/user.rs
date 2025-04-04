@@ -1,11 +1,13 @@
 use std::default::Default;
 
+use crate::init;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct User {
-    #[serde(skip_serializing_if = "is_id_valid")]
-    pub id: i32,
+    #[serde(skip_serializing_if = "init::is_uuid_nil")]
+    pub id: uuid::Uuid,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub username: String,
     #[serde(skip_serializing_if = "String::is_empty")]
@@ -27,14 +29,10 @@ pub struct User {
     pub last_login: String,
 }
 
-fn is_id_valid(num: &i32) -> bool {
-    *num > 0
-}
-
 impl Default for User {
     fn default() -> Self {
         User {
-            id: -1,
+            id: uuid::Uuid::new_v4(),
             username: String::new(),
             password: String::new(),
             email: String::new(),

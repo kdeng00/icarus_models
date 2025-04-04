@@ -4,10 +4,23 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct CoverArt {
-    pub id: i32,
+    pub id: uuid::Uuid,
     pub title: String,
     pub path: String,
     pub data: Vec<u8>,
+}
+
+pub mod init {
+    use crate::coverart::CoverArt;
+
+    pub fn init_coverart_only_path(path: String) -> CoverArt {
+        CoverArt {
+            id: uuid::Uuid::nil(),
+            title: String::new(),
+            path: path.clone(),
+            data: Vec::new(),
+        }
+    }
 }
 
 impl CoverArt {
@@ -19,5 +32,18 @@ impl CoverArt {
             Ok(_) => Ok(buffer),
             Err(err) => Err(err),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::coverart;
+
+    #[test]
+    fn test_cover_art_image() {
+        let path: String = String::from("somepath");
+        let coverart = coverart::init::init_coverart_only_path(path.clone());
+
+        assert_eq!(path, coverart.path);
     }
 }

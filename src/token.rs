@@ -13,8 +13,8 @@ pub struct Token {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AccessToken {
-    #[serde(alias = "user_id")]
-    pub user_id: i32,
+    #[serde(alias = "init::is_uuid_nil")]
+    pub user_id: uuid::Uuid,
     #[serde(alias = "username")]
     pub username: String,
     #[serde(alias = "token")]
