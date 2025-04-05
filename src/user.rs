@@ -27,6 +27,8 @@ pub struct User {
     pub status: String,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub last_login: String,
+    #[serde(skip_serializing_if = "init::is_uuid_nil")]
+    pub salt_id: uuid::Uuid,
 }
 
 impl Default for User {
@@ -43,6 +45,7 @@ impl Default for User {
             date_created: String::new(),
             status: String::new(),
             last_login: String::new(),
+            salt_id: uuid::Uuid::nil(),
         }
     }
 }
@@ -53,6 +56,32 @@ impl User {
             serde_json::to_string_pretty(&self)
         } else {
             serde_json::to_string(&self)
+        }
+    }
+}
+
+pub mod salt {
+    use std::default::Default;
+
+    use crate::init;
+
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Clone, Debug, Default, Deserialize, Serialize)]
+    pub struct Salt {
+        #[serde(skip_serializing_if = "init::is_uuid_nil")]
+        pub id: uuid::Uuid,
+        #[serde(skip_serializing_if = "String::is_empty")]
+        pub salt: String,
+    }
+
+    impl Salt {
+        pub fn to_json(&self, output_pretty: bool) -> Result<String, serde_json::Error> {
+            if output_pretty {
+                serde_json::to_string_pretty(&self)
+            } else {
+                serde_json::to_string(&self)
+            }
         }
     }
 }
