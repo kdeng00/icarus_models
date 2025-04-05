@@ -21,9 +21,11 @@ pub struct User {
     #[serde(skip_serializing_if = "String::is_empty")]
     pub lastname: String,
     pub email_verified: bool,
+    #[serde(with = "time::serde::rfc3339::option")]
     pub date_created: Option<time::OffsetDateTime>,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub status: String,
+    #[serde(with = "time::serde::rfc3339::option")]
     pub last_login: Option<time::OffsetDateTime>,
     #[serde(skip_serializing_if = "init::is_uuid_nil")]
     pub salt_id: uuid::Uuid,
