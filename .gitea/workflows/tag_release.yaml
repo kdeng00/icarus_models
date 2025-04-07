@@ -3,9 +3,8 @@ name: Release Tagging
 on:
   push:
     branches:
+      - main
       - devel
-    tags:
-      - 'v*' # Trigger on tags matching v*
 
 jobs:
   release:
