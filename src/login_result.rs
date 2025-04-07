@@ -9,7 +9,7 @@ pub struct LoginResult {
     pub token: String,
     #[serde(alias = "token_type")]
     pub token_type: String,
-    pub expiration: i32,
+    pub expiration: i64,
 }
 
 impl Default for LoginResult {
