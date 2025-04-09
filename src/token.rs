@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Token {
     pub scope: String,
-    pub expiration: i32,
+    pub expiration: i64,
     pub audience: String,
     pub issuer: String,
-    pub issued: i32,
+    pub issued: i64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -22,7 +22,7 @@ pub struct AccessToken {
     #[serde(alias = "token_type")]
     pub token_type: String,
     #[serde(alias = "expiration")]
-    pub expiration: i32,
+    pub expiration: i64,
     #[serde(alias = "message")]
     pub message: String,
 }
