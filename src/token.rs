@@ -5,10 +5,10 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Token {
     pub scope: String,
-    pub expiration: i32,
+    pub expiration: i64,
     pub audience: String,
     pub issuer: String,
-    pub issued: i32,
+    pub issued: i64,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -22,7 +22,7 @@ pub struct AccessToken {
     #[serde(alias = "token_type")]
     pub token_type: String,
     #[serde(alias = "expiration")]
-    pub expiration: i32,
+    pub expiration: i64,
     #[serde(alias = "message")]
     pub message: String,
 }
@@ -57,14 +57,27 @@ impl Token {
         false
     }
 
-    // TODO: Implement
     pub fn contains_scope(&self, des_scope: &String) -> bool {
-        let extracted_token: String = String::from("Token");
+        self.scope.contains(des_scope)
+    }
+}
 
-        if extracted_token == *des_scope {
-            return true;
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        false
+    #[test]
+    fn test_token_scope_check() {
+        let mut token = Token::default();
+        token.scope = String::from("song:read song:upload song:download");
+
+        let check_scope = String::from("song:download");
+        let result = token.contains_scope(&check_scope);
+
+        assert!(
+            result,
+            "Error: The scope {:?} was not found in the token's scope {:?}",
+            check_scope, token.scope
+        );
     }
 }
