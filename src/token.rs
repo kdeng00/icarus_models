@@ -57,14 +57,27 @@ impl Token {
         false
     }
 
-    // TODO: Implement
     pub fn contains_scope(&self, des_scope: &String) -> bool {
-        let extracted_token: String = String::from("Token");
+        self.scope.contains(des_scope)
+    }
+}
 
-        if extracted_token == *des_scope {
-            return true;
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-        false
+    #[test]
+    fn test_token_scope_check() {
+        let mut token = Token::default();
+        token.scope = String::from("song:read song:upload song:download");
+
+        let check_scope = String::from("song:download");
+        let result = token.contains_scope(&check_scope);
+
+        assert!(
+            result,
+            "Error: The scope {:?} was not found in the token's scope {:?}",
+            check_scope, token.scope
+        );
     }
 }
