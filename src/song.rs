@@ -67,10 +67,7 @@ impl Song {
 
     pub fn song_path(&self) -> Result<String, std::io::Error> {
         if self.directory.is_empty() {
-            return Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                "Directory does not exist",
-            ));
+            return Err(std::io::Error::other("Directory does not exist"));
         }
 
         let directory = &self.directory;
@@ -86,8 +83,7 @@ impl Song {
 
             Ok(buffer)
         } else {
-            Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
+            Err(std::io::Error::other(
                 "Could not access last character of directory",
             ))
         }
@@ -103,10 +99,7 @@ impl Song {
                 file.read_to_end(&mut buffer)?;
 
                 if buffer.is_empty() {
-                    Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        "File is empty",
-                    ))
+                    Err(std::io::Error::other("File is empty"))
                 } else {
                     Ok(buffer)
                 }

@@ -2,7 +2,7 @@
 name = "icarus_models"
 version = "0.4.3"
 edition = "2024"
-rust-version = "1.86"
+rust-version = "1.88"
 description = "models used for the icarus project"
 license = "MIT"
 
