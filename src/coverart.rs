@@ -7,6 +7,7 @@ pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
     pub path: String,
+    #[serde(skip)]
     pub data: Vec<u8>,
 }
 
