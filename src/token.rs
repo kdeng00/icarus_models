@@ -62,6 +62,55 @@ impl Token {
     }
 }
 
+pub fn get_issued() -> time::Result<time::OffsetDateTime> {
+    Ok(time::OffsetDateTime::now_utc())
+}
+
+pub fn get_expiration(issued: &time::OffsetDateTime) -> Result<time::OffsetDateTime, time::Error> {
+    let duration_expire = time::Duration::hours(4);
+    Ok(*issued + duration_expire)
+}
+
+mod util {
+    pub fn time_to_std_time(
+        provided_time: &time::OffsetDateTime,
+    ) -> Result<std::time::SystemTime, std::time::SystemTimeError> {
+        let converted = std::time::SystemTime::from(*provided_time);
+        Ok(converted)
+    }
+}
+
+pub fn create_token(
+    key: &String,
+    message: &String,
+    issuer: &String,
+    audience: &String,
+) -> Result<(String, i64), josekit::JoseError> {
+    let mut header = josekit::jws::JwsHeader::new();
+    header.set_token_type("JWT");
+
+    let mut payload = josekit::jwt::JwtPayload::new();
+    payload.set_subject(message);
+    payload.set_issuer(issuer);
+    payload.set_audience(vec![audience]);
+    match get_issued() {
+        Ok(issued) => {
+            let expire = get_expiration(&issued).unwrap();
+            payload.set_issued_at(&util::time_to_std_time(&issued).unwrap());
+            payload.set_expires_at(&util::time_to_std_time(&expire).unwrap());
+
+            let signer = josekit::jws::alg::hmac::HmacJwsAlgorithm::Hs256
+                .signer_from_bytes(key.as_bytes())
+                .unwrap();
+            Ok((
+                josekit::jwt::encode_with_signer(&payload, &header, &signer).unwrap(),
+                (expire - time::OffsetDateTime::UNIX_EPOCH).whole_seconds(),
+            ))
+        }
+        Err(e) => Err(josekit::JoseError::InvalidClaim(e.into())),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
