@@ -66,11 +66,6 @@ pub fn get_issued() -> time::Result<time::OffsetDateTime> {
     Ok(time::OffsetDateTime::now_utc())
 }
 
-pub fn get_expiration(issued: &time::OffsetDateTime) -> Result<time::OffsetDateTime, time::Error> {
-    let duration_expire = time::Duration::hours(4);
-    Ok(*issued + duration_expire)
-}
-
 mod util {
     pub fn time_to_std_time(
         provided_time: &time::OffsetDateTime,
@@ -80,22 +75,33 @@ mod util {
     }
 }
 
+#[derive(Debug)]
+pub struct TokenResource {
+    pub message: String,
+    pub issuer: String,
+    pub audiences: Vec<String>,
+}
+
+pub const TOKEN_TYPE: &str = "JWT";
+
 pub fn create_token(
     key: &String,
-    message: &String,
-    issuer: &String,
-    audience: &String,
+    token_resource: &TokenResource,
+    duration: time::Duration,
 ) -> Result<(String, i64), josekit::JoseError> {
     let mut header = josekit::jws::JwsHeader::new();
-    header.set_token_type("JWT");
+    header.set_token_type(TOKEN_TYPE);
 
     let mut payload = josekit::jwt::JwtPayload::new();
+    let message = &token_resource.message;
+    let issuer = &token_resource.issuer;
+    let audiences: &Vec<String> = &token_resource.audiences;
     payload.set_subject(message);
     payload.set_issuer(issuer);
-    payload.set_audience(vec![audience]);
+    payload.set_audience(audiences.clone());
     match get_issued() {
         Ok(issued) => {
-            let expire = get_expiration(&issued).unwrap();
+            let expire = issued + duration;
             payload.set_issued_at(&util::time_to_std_time(&issued).unwrap());
             payload.set_expires_at(&util::time_to_std_time(&expire).unwrap());
 
@@ -128,5 +134,31 @@ mod tests {
             "Error: The scope {:?} was not found in the token's scope {:?}",
             check_scope, token.scope
         );
+    }
+
+    #[test]
+    fn test_token_creation() {
+        let key = String::from(
+            "c3092urmc2219ix320i40m293ic29IM09IN0u879Y8B98YB8yb86TN7B55R4yv4RCVU6Bi8YO8U",
+        );
+        let test_token_resource = TokenResource {
+            issuer: String::from("icarus_auth_test"),
+            message: String::from("Authorization"),
+            audiences: vec![String::from("icarus_test")],
+        };
+        let token_expiration_duration = time::Duration::hours(2);
+
+        match create_token(&key, &test_token_resource, token_expiration_duration) {
+            Ok((token, expire_duration)) => {
+                assert_eq!(false, token.is_empty(), "Error: Token is empty");
+                assert!(
+                    expire_duration > 0,
+                    "Token expire duration is invalid {expire_duration:?}"
+                );
+            }
+            Err(err) => {
+                assert!(false, "Error: {err:?}");
+            }
+        }
     }
 }
