@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
+    #[serde(skip)]
     pub path: String,
     #[serde(skip)]
     pub data: Vec<u8>,
