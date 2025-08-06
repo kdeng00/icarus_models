@@ -80,6 +80,7 @@ pub struct TokenResource {
     pub message: String,
     pub issuer: String,
     pub audiences: Vec<String>,
+    pub id: uuid::Uuid,
 }
 
 pub const TOKEN_TYPE: &str = "JWT";
@@ -99,6 +100,14 @@ pub fn create_token(
     payload.set_subject(message);
     payload.set_issuer(issuer);
     payload.set_audience(audiences.clone());
+    if !token_resource.id.is_nil() {
+        match payload.set_claim("id", Some(serde_json::json!(token_resource.id))) {
+            Ok(_) => {}
+            Err(err) => {
+                return Err(err);
+            }
+        }
+    }
     match get_issued() {
         Ok(issued) => {
             let expire = issued + duration;
@@ -121,6 +130,19 @@ pub fn create_token(
 mod tests {
     use super::*;
 
+    fn test_key() -> String {
+        String::from("c3092urmc2219ix320i40m293ic29IM09IN0u879Y8B98YB8yb86TN7B55R4yv4RCVU6Bi8YO8U")
+    }
+
+    fn test_resource() -> TokenResource {
+        TokenResource {
+            issuer: String::from("icarus_auth_test"),
+            message: String::from("Authorization"),
+            audiences: vec![String::from("icarus_test")],
+            id: uuid::Uuid::nil(),
+        }
+    }
+
     #[test]
     fn test_token_scope_check() {
         let mut token = Token::default();
@@ -138,14 +160,29 @@ mod tests {
 
     #[test]
     fn test_token_creation() {
-        let key = String::from(
-            "c3092urmc2219ix320i40m293ic29IM09IN0u879Y8B98YB8yb86TN7B55R4yv4RCVU6Bi8YO8U",
-        );
-        let test_token_resource = TokenResource {
-            issuer: String::from("icarus_auth_test"),
-            message: String::from("Authorization"),
-            audiences: vec![String::from("icarus_test")],
-        };
+        let key = test_key();
+        let test_token_resource = test_resource();
+        let token_expiration_duration = time::Duration::hours(2);
+
+        match create_token(&key, &test_token_resource, token_expiration_duration) {
+            Ok((token, expire_duration)) => {
+                assert_eq!(false, token.is_empty(), "Error: Token is empty");
+                assert!(
+                    expire_duration > 0,
+                    "Token expire duration is invalid {expire_duration:?}"
+                );
+            }
+            Err(err) => {
+                assert!(false, "Error: {err:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn test_token_creation_with_id() {
+        let key = test_key();
+        let mut test_token_resource = test_resource();
+        test_token_resource.id = uuid::Uuid::new_v4();
         let token_expiration_duration = time::Duration::hours(2);
 
         match create_token(&key, &test_token_resource, token_expiration_duration) {
