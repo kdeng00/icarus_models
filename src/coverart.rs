@@ -6,9 +6,11 @@ use serde::{Deserialize, Serialize};
 pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
+    #[serde(skip)]
     pub path: String,
     #[serde(skip)]
     pub data: Vec<u8>,
+    pub song_id: uuid::Uuid,
 }
 
 pub mod init {
@@ -20,6 +22,7 @@ pub mod init {
             title: String::new(),
             path: path.clone(),
             data: Vec::new(),
+            song_id: uuid::Uuid::nil(),
         }
     }
 }

@@ -1,6 +1,6 @@
 [package]
 name = "icarus_models"
-version = "0.5.0"
+version = "0.5.5"
 edition = "2024"
 rust-version = "1.88"
 description = "models used for the icarus project"
@@ -12,6 +12,7 @@ serde_json = { version = "1.0.140" }
 rand = { version = "0.9.1" }
 time = { version = "0.3.41", features = ["formatting", "macros", "parsing", "serde"] }
 uuid = { version = "1.17.0", features = ["v4", "serde"] }
+josekit = { version = "0.10.3" }
 
 [dev-dependencies]
 tempfile = { version = "3.20.0" }

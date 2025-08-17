@@ -1,9 +1,9 @@
 name: Release Tagging
 
 on:
-  push:
+  pull_request:
     branches:
-      - devel
+      - main
 
 jobs:
   release:
