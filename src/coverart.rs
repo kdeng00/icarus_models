@@ -2,7 +2,7 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
