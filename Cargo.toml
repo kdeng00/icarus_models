@@ -13,6 +13,7 @@ rand = { version = "0.9.1" }
 time = { version = "0.3.41", features = ["formatting", "macros", "parsing", "serde"] }
 uuid = { version = "1.17.0", features = ["v4", "serde"] }
 josekit = { version = "0.10.3" }
+utoipa = { version = "5.4.0" }
 
 [dev-dependencies]
 tempfile = { version = "3.20.0" }
