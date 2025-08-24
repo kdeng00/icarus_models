@@ -2,7 +2,7 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct AccessLevel {
     pub id: uuid::Uuid,
     pub level: String,

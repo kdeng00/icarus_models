@@ -4,7 +4,7 @@ use crate::init;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct User {
     #[serde(skip_serializing_if = "init::is_uuid_nil")]
     pub id: uuid::Uuid,

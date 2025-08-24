@@ -7,7 +7,7 @@ use crate::types;
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct Song {
     #[serde(skip_serializing_if = "init::is_uuid_nil")]
     #[serde(alias = "id")]
