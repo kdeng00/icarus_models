@@ -1,5 +1,3 @@
-use std::io::Read;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
@@ -28,8 +26,16 @@ pub mod init {
 }
 
 impl CoverArt {
-    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path: &String = &self.path;
+    // TODO: Add method to save to filesystem
+    // TODO: Add method to remove from filesystem
+}
+
+pub mod io {
+    use std::io::Read;
+
+    /// Gets the raw data of the cover art
+    pub fn to_data(coverart: &super::CoverArt) -> Result<Vec<u8>, std::io::Error> {
+        let path: &String = &coverart.path;
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
         match file.read_to_end(&mut buffer) {
@@ -37,9 +43,6 @@ impl CoverArt {
             Err(err) => Err(err),
         }
     }
-
-    // TODO: Add method to save to filesystem
-    // TODO: Add method to remove from filesystem
 }
 
 #[cfg(test)]
