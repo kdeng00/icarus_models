@@ -1,3 +1,5 @@
+use std::io::Write;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
@@ -26,7 +28,17 @@ pub mod init {
 }
 
 impl CoverArt {
-    // TODO: Add method to save to filesystem
+    /// Saves the coverart to the filesystem
+    pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
+        match std::fs::File::create(&self.path) {
+            Ok(mut file) => match file.write_all(&self.data) {
+                Ok(_) => Ok(()),
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
+        }
+    }
+
     // TODO: Add method to remove from filesystem
 }
 

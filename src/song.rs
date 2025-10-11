@@ -113,7 +113,7 @@ impl Song {
             Ok(song_path) => {
                 let p = std::path::Path::new(&song_path);
                 if p.exists() {
-                    match std::fs::remove_file(&p) {
+                    match std::fs::remove_file(p) {
                         Ok(_) => Ok(()),
                         Err(err) => Err(err),
                     }
