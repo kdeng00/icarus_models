@@ -39,7 +39,20 @@ impl CoverArt {
         }
     }
 
-    // TODO: Add method to remove from filesystem
+    /// Removes the coverart from the filesystem
+    pub fn remove_from_filesystem(&self) -> Result<(), std::io::Error> {
+        let p = std::path::Path::new(&self.path);
+        if p.exists() {
+            match std::fs::remove_file(p) {
+                Ok(_) => Ok(()),
+                Err(err) => Err(err),
+            }
+        } else {
+            Err(std::io::Error::other(
+                "Cannot delete file that does not exist",
+            ))
+        }
+    }
 }
 
 pub mod io {

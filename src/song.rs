@@ -118,7 +118,9 @@ impl Song {
                         Err(err) => Err(err),
                     }
                 } else {
-                    Ok(())
+                    Err(std::io::Error::other(
+                        "Cannot delete file that does not exist",
+                    ))
                 }
             }
             Err(err) => Err(err),

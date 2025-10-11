@@ -1,6 +1,6 @@
 [package]
 name = "icarus_models"
-version = "0.6.5"
+version = "0.6.6"
 edition = "2024"
 rust-version = "1.88"
 description = "models used for the icarus project"
