@@ -1,11 +1,14 @@
-use std::io::Read;
+use std::io::Write;
+
+use rand::Rng;
+use serde::{Deserialize, Serialize};
 
 use crate::constants;
 use crate::init;
 use crate::types;
 
-use rand::Rng;
-use serde::{Deserialize, Serialize};
+/// Length of characters of a filename to be generated
+const FILENAME_LENGTH: i32 = 16;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct Song {
@@ -90,10 +93,114 @@ impl Song {
         }
     }
 
-    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path_result = self.song_path();
+    /// Saves the song to the filesystem using the song's data
+    pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
+        match self.song_path() {
+            Ok(song_path) => match std::fs::File::create(&song_path) {
+                Ok(mut file) => match file.write_all(&self.data) {
+                    Ok(_res) => Ok(()),
+                    Err(err) => Err(err),
+                },
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
+        }
+    }
 
-        match path_result {
+    /// Removes the song from the filesystem
+    pub fn remove_from_filesystem(&self) -> Result<(), std::io::Error> {
+        match self.song_path() {
+            Ok(song_path) => {
+                let p = std::path::Path::new(&song_path);
+                if p.exists() {
+                    match std::fs::remove_file(&p) {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    }
+                } else {
+                    Ok(())
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
+}
+
+/// Generates a filename. In order to save a song to the filesystem, the song must have
+/// a directory and filename
+pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
+    let file_extension = match typ {
+        types::MusicTypes::DefaultMusicExtension => {
+            String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
+        }
+
+        types::MusicTypes::WavExtension => {
+            String::from(constants::file_extensions::audio::WAVEXTENSION)
+        }
+        types::MusicTypes::FlacExtension => {
+            String::from(constants::file_extensions::audio::FLACEXTENSION)
+        }
+        types::MusicTypes::MPThreeExtension => {
+            String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
+        }
+    };
+
+    if randomize {
+        let mut filename: String = String::new();
+        let some_chars: String = String::from("abcdefghij0123456789");
+        let mut rng = rand::rng();
+
+        for _ in 0..FILENAME_LENGTH {
+            let index = rng.random_range(0..=19);
+            let rando_char = some_chars.chars().nth(index);
+
+            if let Some(c) = rando_char {
+                filename.push(c);
+            }
+        }
+        filename + &file_extension
+    } else {
+        "track-output".to_string() + &file_extension
+    }
+}
+
+/// I/O operations for songs
+pub mod io {
+    use std::io::Read;
+
+    /// Copies a song using the source song's data
+    pub fn copy_song(
+        song_source: &super::Song,
+        song_target: &mut super::Song,
+    ) -> Result<(), std::io::Error> {
+        match song_target.song_path() {
+            Ok(songpath) => {
+                let p = std::path::Path::new(&songpath);
+                if p.exists() {
+                    Err(std::io::Error::other(
+                        "Cannot copy song over to one that already exists",
+                    ))
+                } else {
+                    if song_target.data.is_empty() {
+                        song_target.data = song_source.data.clone();
+                    } else {
+                        song_target.data.clear();
+                        song_target.data = song_source.data.clone();
+                    }
+
+                    match song_target.save_to_filesystem() {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    }
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Gets the raw file data of a song from the filesystem
+    pub fn to_data(song: &super::Song) -> Result<Vec<u8>, std::io::Error> {
+        match song.song_path() {
             Ok(path) => {
                 let mut file = std::fs::File::open(path)?;
                 let mut buffer: Vec<u8> = Vec::new();
@@ -107,47 +214,5 @@ impl Song {
             }
             Err(er) => Err(er),
         }
-    }
-
-    pub fn generate_filename(&self, typ: types::MusicTypes, randomize: bool) -> String {
-        let mut filename: String = String::new();
-        let filename_len = 10;
-
-        let file_extension = match typ {
-            types::MusicTypes::DefaultMusicExtension => {
-                String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
-            }
-
-            types::MusicTypes::WavExtension => {
-                String::from(constants::file_extensions::audio::WAVEXTENSION)
-            }
-            types::MusicTypes::FlacExtension => {
-                String::from(constants::file_extensions::audio::FLACEXTENSION)
-            }
-            types::MusicTypes::MPThreeExtension => {
-                String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
-            }
-        };
-
-        if randomize {
-            let some_chars: String = String::from("abcdefghij0123456789");
-            let mut rng = rand::rng();
-
-            for _i in 0..filename_len {
-                let random_number: i32 = rng.random_range(0..=19);
-                let index = random_number as usize;
-                let rando_char = some_chars.chars().nth(index);
-
-                if let Some(c) = rando_char {
-                    filename.push(c);
-                }
-            }
-        } else {
-            filename += "track-output";
-        }
-
-        filename += &file_extension;
-
-        filename
     }
 }

@@ -37,6 +37,9 @@ impl CoverArt {
             Err(err) => Err(err),
         }
     }
+
+    // TODO: Add method to save to filesystem
+    // TODO: Add method to remove from filesystem
 }
 
 #[cfg(test)]
