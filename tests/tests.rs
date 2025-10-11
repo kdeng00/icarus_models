@@ -120,7 +120,7 @@ mod song_tests {
     }
 
     #[test]
-    fn test_save_song_to_filesystem() {
+    fn test_save_song_to_filesystem_and_remove() {
         let mut song = song::Song::default();
         song.directory = utils::get_tests_directory();
         song.filename = String::from("track02.flac");
@@ -132,7 +132,12 @@ mod song_tests {
         };
 
         match song::io::copy_song(&song, &mut copied_song) {
-            Ok(_) => {}
+            Ok(_) => match copied_song.remove_from_filesystem() {
+                Ok(_) => {}
+                Err(err) => {
+                    assert!(false, "Error: {err:?}")
+                }
+            },
             Err(err) => {
                 assert!(false, "Error: {err:?}")
             }
@@ -142,7 +147,6 @@ mod song_tests {
 
 #[cfg(test)]
 mod album_tests {
-
     use crate::utils;
     use icarus_models::album;
 

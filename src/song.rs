@@ -7,6 +7,7 @@ use crate::constants;
 use crate::init;
 use crate::types;
 
+/// Length of characters of a filename to be generated
 const FILENAME_LENGTH: i32 = 16;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
@@ -92,7 +93,6 @@ impl Song {
         }
     }
 
-
     /// Saves the song to the filesystem using the song's data
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
         match self.song_path() {
@@ -107,9 +107,24 @@ impl Song {
         }
     }
 
-    // TODO: Add function to remove file from the filesystem
+    /// Removes the song from the filesystem
+    pub fn remove_from_filesystem(&self) -> Result<(), std::io::Error> {
+        match self.song_path() {
+            Ok(song_path) => {
+                let p = std::path::Path::new(&song_path);
+                if p.exists() {
+                    match std::fs::remove_file(&p) {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    }
+                } else {
+                    Ok(())
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
 }
-
 
 /// Generates a filename. In order to save a song to the filesystem, the song must have
 /// a directory and filename
