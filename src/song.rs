@@ -168,3 +168,5 @@ impl Song {
 
     // TODO: Add function to remove file from the filesystem
 }
+
+// TODO: Add function to copy song
