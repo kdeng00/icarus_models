@@ -158,29 +158,26 @@ mod song_tests {
         song.filename = String::from("track02.flac");
 
         match song.song_path() {
-            Ok(song_path) => {
-                match utils::extract_data_from_file(&song_path) {
-                    Ok(data) => {
-                        let copied_song = song::Song {
-                            directory: utils::get_tests_directory(),
-                            filename: String::from("track02-coppied.flac"),
-                            data: data,
-                            ..Default::default()
-                        };
+            Ok(song_path) => match utils::extract_data_from_file(&song_path) {
+                Ok(data) => {
+                    let copied_song = song::Song {
+                        directory: utils::get_tests_directory(),
+                        filename: String::from("track02-coppied.flac"),
+                        data: data,
+                        ..Default::default()
+                    };
 
-                        match copied_song.save_to_filesystem() {
-                            Ok(_) => {
-                            }
-                            Err(err) => {
-                                assert!(false, "Error: {err:?}")
-                            }
+                    match copied_song.save_to_filesystem() {
+                        Ok(_) => {}
+                        Err(err) => {
+                            assert!(false, "Error: {err:?}")
                         }
                     }
-                    Err(err) => {
-                        assert!(false, "Error: {err:?}")
-                    }
                 }
-            }
+                Err(err) => {
+                    assert!(false, "Error: {err:?}")
+                }
+            },
             Err(err) => {
                 assert!(false, "Error: {err:?}");
             }

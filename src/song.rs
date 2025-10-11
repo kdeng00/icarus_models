@@ -1,4 +1,4 @@
-use std::io::{Read,Write};
+use std::io::{Read, Write};
 
 use crate::constants;
 use crate::init;
@@ -155,24 +155,14 @@ impl Song {
 
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
         match self.song_path() {
-            Ok(song_path) => {
-                match std::fs::File::create(&song_path) {
-                    Ok(mut file) => {
-                        match file.write_all(&self.data) {
-                            Ok(_res) => {
-                                Ok(())
-                            }
-                            Err(err) => {
-                                Err(err)
-                            }
-                        }
-                    }
-                    Err(err) => {
-                        Err(err)
-                    }
-                }
-            }
-            Err(err) => Err(err)
+            Ok(song_path) => match std::fs::File::create(&song_path) {
+                Ok(mut file) => match file.write_all(&self.data) {
+                    Ok(_res) => Ok(()),
+                    Err(err) => Err(err),
+                },
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
         }
     }
 
