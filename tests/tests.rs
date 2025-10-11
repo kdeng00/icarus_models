@@ -107,7 +107,7 @@ mod song_tests {
         };
 
         assert_eq!(song.directory.is_empty(), false);
-        song_cpy.filename = song.generate_filename(types::MusicTypes::FlacExtension, true);
+        song_cpy.filename = song::generate_filename(types::MusicTypes::FlacExtension, true);
         println!("Directory: {:?}", song_cpy.directory);
         println!("File to be created: {:?}", song_cpy.filename);
 

@@ -7,6 +7,8 @@ use crate::constants;
 use crate::init;
 use crate::types;
 
+const FILENAME_LENGTH: i32 = 16;
+
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct Song {
     #[serde(skip_serializing_if = "init::is_uuid_nil")]
@@ -90,48 +92,6 @@ impl Song {
         }
     }
 
-    // TODO: Make this available as a function
-    pub fn generate_filename(&self, typ: types::MusicTypes, randomize: bool) -> String {
-        let mut filename: String = String::new();
-        let filename_len = 10;
-
-        let file_extension = match typ {
-            types::MusicTypes::DefaultMusicExtension => {
-                String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
-            }
-
-            types::MusicTypes::WavExtension => {
-                String::from(constants::file_extensions::audio::WAVEXTENSION)
-            }
-            types::MusicTypes::FlacExtension => {
-                String::from(constants::file_extensions::audio::FLACEXTENSION)
-            }
-            types::MusicTypes::MPThreeExtension => {
-                String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
-            }
-        };
-
-        if randomize {
-            let some_chars: String = String::from("abcdefghij0123456789");
-            let mut rng = rand::rng();
-
-            for _i in 0..filename_len {
-                let random_number: i32 = rng.random_range(0..=19);
-                let index = random_number as usize;
-                let rando_char = some_chars.chars().nth(index);
-
-                if let Some(c) = rando_char {
-                    filename.push(c);
-                }
-            }
-        } else {
-            filename += "track-output";
-        }
-
-        filename += &file_extension;
-
-        filename
-    }
 
     /// Saves the song to the filesystem using the song's data
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
@@ -148,6 +108,45 @@ impl Song {
     }
 
     // TODO: Add function to remove file from the filesystem
+}
+
+
+/// Generates a filename. In order to save a song to the filesystem, the song must have
+/// a directory and filename
+pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
+    let file_extension = match typ {
+        types::MusicTypes::DefaultMusicExtension => {
+            String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
+        }
+
+        types::MusicTypes::WavExtension => {
+            String::from(constants::file_extensions::audio::WAVEXTENSION)
+        }
+        types::MusicTypes::FlacExtension => {
+            String::from(constants::file_extensions::audio::FLACEXTENSION)
+        }
+        types::MusicTypes::MPThreeExtension => {
+            String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
+        }
+    };
+
+    if randomize {
+        let mut filename: String = String::new();
+        let some_chars: String = String::from("abcdefghij0123456789");
+        let mut rng = rand::rng();
+
+        for _ in 0..FILENAME_LENGTH {
+            let index = rng.random_range(0..=19);
+            let rando_char = some_chars.chars().nth(index);
+
+            if let Some(c) = rando_char {
+                filename.push(c);
+            }
+        }
+        filename + &file_extension
+    } else {
+        "track-output".to_string() + &file_extension
+    }
 }
 
 /// I/O operations for songs
