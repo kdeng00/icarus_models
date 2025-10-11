@@ -1,11 +1,11 @@
 use std::io::{Read, Write};
 
+use rand::Rng;
+use serde::{Deserialize, Serialize};
+
 use crate::constants;
 use crate::init;
 use crate::types;
-
-use rand::Rng;
-use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct Song {
@@ -153,6 +153,7 @@ impl Song {
         filename
     }
 
+    /// Saves the song to the filesystem using the song's data
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
         match self.song_path() {
             Ok(song_path) => match std::fs::File::create(&song_path) {
@@ -169,4 +170,35 @@ impl Song {
     // TODO: Add function to remove file from the filesystem
 }
 
-// TODO: Add function to copy song
+/// I/O operations for songs
+pub mod io {
+    /// Copies a song using the source song's data
+    pub fn copy_song(
+        song_source: &super::Song,
+        song_target: &mut super::Song,
+    ) -> Result<(), std::io::Error> {
+        match song_target.song_path() {
+            Ok(songpath) => {
+                let p = std::path::Path::new(&songpath);
+                if p.exists() {
+                    Err(std::io::Error::other(
+                        "Cannot copy song over to one that already exists",
+                    ))
+                } else {
+                    if song_target.data.is_empty() {
+                        song_target.data = song_source.data.clone();
+                    } else {
+                        song_target.data.clear();
+                        song_target.data = song_source.data.clone();
+                    }
+
+                    match song_target.save_to_filesystem() {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    }
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
+}

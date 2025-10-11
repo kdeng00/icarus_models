@@ -30,15 +30,11 @@ mod utils {
 
 #[cfg(test)]
 mod song_tests {
-    use std::fs::File;
-    use std::io::Write;
-
     use tempfile::tempdir;
 
+    use crate::utils;
     use icarus_models::song;
     use icarus_models::types;
-
-    use crate::utils;
 
     #[test]
     fn test_song_to_data() {
@@ -103,50 +99,22 @@ mod song_tests {
         song.directory = utils::get_tests_directory();
         song.filename = String::from("track01.flac");
 
-        match song.song_path() {
-            Ok(songpath) => match utils::extract_data_from_file(&songpath) {
-                Ok(buffer) => {
-                    let mut song_cpy = song.clone();
-                    let temp_dir = tempdir().expect("Failed to create temp dir");
-                    song_cpy.directory = match temp_dir.path().to_str() {
-                        Some(s) => String::from(s),
-                        None => String::new(),
-                    };
+        let mut song_cpy = song.clone();
+        let temp_dir = tempdir().expect("Failed to create temp dir");
+        song_cpy.directory = match temp_dir.path().to_str() {
+            Some(s) => String::from(s),
+            None => String::new(),
+        };
 
-                    assert_eq!(song.directory.is_empty(), false);
-                    song_cpy.filename =
-                        song.generate_filename(types::MusicTypes::FlacExtension, true);
-                    println!("Directory: {:?}", song_cpy.directory);
-                    println!("File to be created: {:?}", song_cpy.filename);
+        assert_eq!(song.directory.is_empty(), false);
+        song_cpy.filename = song.generate_filename(types::MusicTypes::FlacExtension, true);
+        println!("Directory: {:?}", song_cpy.directory);
+        println!("File to be created: {:?}", song_cpy.filename);
 
-                    let path = match song_cpy.song_path() {
-                        Ok(s_path) => s_path,
-                        Err(err) => {
-                            assert!(false, "Error: {:?}", err);
-                            String::new()
-                        }
-                    };
-
-                    match File::create(path) {
-                        Ok(mut file_cpy) => match file_cpy.write_all(&buffer) {
-                            Ok(success) => {
-                                println!("Success: {:?}", success);
-                            }
-                            Err(err) => {
-                                assert!(false, "Error saving file: {:?}", err);
-                            }
-                        },
-                        Err(err) => {
-                            assert!(false, "Error: {:?}", err);
-                        }
-                    };
-                }
-                Err(err) => {
-                    assert!(false, "Error: {:?}", err);
-                }
-            },
+        match song::copy_song(&song, &mut song_cpy) {
+            Ok(_) => {}
             Err(err) => {
-                assert!(false, "Error extracting song data: {:?}", err);
+                assert!(false, "Error copying song: Error: {err:?}")
             }
         }
     }
@@ -157,29 +125,16 @@ mod song_tests {
         song.directory = utils::get_tests_directory();
         song.filename = String::from("track02.flac");
 
-        match song.song_path() {
-            Ok(song_path) => match utils::extract_data_from_file(&song_path) {
-                Ok(data) => {
-                    let copied_song = song::Song {
-                        directory: utils::get_tests_directory(),
-                        filename: String::from("track02-coppied.flac"),
-                        data: data,
-                        ..Default::default()
-                    };
+        let mut copied_song = song::Song {
+            directory: utils::get_tests_directory(),
+            filename: String::from("track02-coppied.flac"),
+            ..Default::default()
+        };
 
-                    match copied_song.save_to_filesystem() {
-                        Ok(_) => {}
-                        Err(err) => {
-                            assert!(false, "Error: {err:?}")
-                        }
-                    }
-                }
-                Err(err) => {
-                    assert!(false, "Error: {err:?}")
-                }
-            },
+        match song::copy_song(&song, &mut copied_song) {
+            Ok(_) => {}
             Err(err) => {
-                assert!(false, "Error: {err:?}");
+                assert!(false, "Error: {err:?}")
             }
         }
     }
