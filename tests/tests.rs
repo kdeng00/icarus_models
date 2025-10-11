@@ -61,7 +61,7 @@ mod song_tests {
                 Ok(buffer) => {
                     assert_eq!(buffer.is_empty(), false);
 
-                    match song.to_data() {
+                    match song::io::to_data(&song) {
                         Ok(song_data) => {
                             println!("Both files match");
                             assert_eq!(buffer, song_data);
@@ -111,7 +111,7 @@ mod song_tests {
         println!("Directory: {:?}", song_cpy.directory);
         println!("File to be created: {:?}", song_cpy.filename);
 
-        match song::copy_song(&song, &mut song_cpy) {
+        match song::io::copy_song(&song, &mut song_cpy) {
             Ok(_) => {}
             Err(err) => {
                 assert!(false, "Error copying song: Error: {err:?}")
@@ -131,7 +131,7 @@ mod song_tests {
             ..Default::default()
         };
 
-        match song::copy_song(&song, &mut copied_song) {
+        match song::io::copy_song(&song, &mut copied_song) {
             Ok(_) => {}
             Err(err) => {
                 assert!(false, "Error: {err:?}")

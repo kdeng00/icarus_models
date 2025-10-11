@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::io::Write;
 
 use rand::Rng;
 use serde::{Deserialize, Serialize};
@@ -91,26 +91,6 @@ impl Song {
     }
 
     // TODO: Make this available as a function
-    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path_result = self.song_path();
-
-        match path_result {
-            Ok(path) => {
-                let mut file = std::fs::File::open(path)?;
-                let mut buffer: Vec<u8> = Vec::new();
-                file.read_to_end(&mut buffer)?;
-
-                if buffer.is_empty() {
-                    Err(std::io::Error::other("File is empty"))
-                } else {
-                    Ok(buffer)
-                }
-            }
-            Err(er) => Err(er),
-        }
-    }
-
-    // TODO: Make this available as a function
     pub fn generate_filename(&self, typ: types::MusicTypes, randomize: bool) -> String {
         let mut filename: String = String::new();
         let filename_len = 10;
@@ -172,6 +152,8 @@ impl Song {
 
 /// I/O operations for songs
 pub mod io {
+    use std::io::Read;
+
     /// Copies a song using the source song's data
     pub fn copy_song(
         song_source: &super::Song,
@@ -199,6 +181,24 @@ pub mod io {
                 }
             }
             Err(err) => Err(err),
+        }
+    }
+
+    /// Gets the raw file data of a song from the filesystem
+    pub fn to_data(song: &super::Song) -> Result<Vec<u8>, std::io::Error> {
+        match song.song_path() {
+            Ok(path) => {
+                let mut file = std::fs::File::open(path)?;
+                let mut buffer: Vec<u8> = Vec::new();
+                file.read_to_end(&mut buffer)?;
+
+                if buffer.is_empty() {
+                    Err(std::io::Error::other("File is empty"))
+                } else {
+                    Ok(buffer)
+                }
+            }
+            Err(er) => Err(er),
         }
     }
 }
