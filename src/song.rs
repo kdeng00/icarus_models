@@ -90,6 +90,7 @@ impl Song {
         }
     }
 
+    // TODO: Make this available as a function
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
         let path_result = self.song_path();
 
@@ -109,6 +110,7 @@ impl Song {
         }
     }
 
+    // TODO: Make this available as a function
     pub fn generate_filename(&self, typ: types::MusicTypes, randomize: bool) -> String {
         let mut filename: String = String::new();
         let filename_len = 10;
