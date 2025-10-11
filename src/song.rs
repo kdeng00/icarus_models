@@ -175,4 +175,6 @@ impl Song {
             Err(err) => Err(err)
         }
     }
+
+    // TODO: Add function to remove file from the filesystem
 }
