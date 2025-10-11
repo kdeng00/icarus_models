@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::io::Write;
 
 use serde::{Deserialize, Serialize};
 
@@ -28,8 +28,39 @@ pub mod init {
 }
 
 impl CoverArt {
-    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path: &String = &self.path;
+    /// Saves the coverart to the filesystem
+    pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
+        match std::fs::File::create(&self.path) {
+            Ok(mut file) => match file.write_all(&self.data) {
+                Ok(_) => Ok(()),
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
+        }
+    }
+
+    /// Removes the coverart from the filesystem
+    pub fn remove_from_filesystem(&self) -> Result<(), std::io::Error> {
+        let p = std::path::Path::new(&self.path);
+        if p.exists() {
+            match std::fs::remove_file(p) {
+                Ok(_) => Ok(()),
+                Err(err) => Err(err),
+            }
+        } else {
+            Err(std::io::Error::other(
+                "Cannot delete file that does not exist",
+            ))
+        }
+    }
+}
+
+pub mod io {
+    use std::io::Read;
+
+    /// Gets the raw data of the cover art
+    pub fn to_data(coverart: &super::CoverArt) -> Result<Vec<u8>, std::io::Error> {
+        let path: &String = &coverart.path;
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
         match file.read_to_end(&mut buffer) {
@@ -37,9 +68,6 @@ impl CoverArt {
             Err(err) => Err(err),
         }
     }
-
-    // TODO: Add method to save to filesystem
-    // TODO: Add method to remove from filesystem
 }
 
 #[cfg(test)]
