@@ -76,7 +76,7 @@ impl CoverArt {
                 directory.clone()
             };
 
-            Ok(buffer + &self.filename.clone()) 
+            Ok(buffer + &self.filename.clone())
         } else {
             Err(std::io::Error::other(
                 "Could not access last character of directory",
