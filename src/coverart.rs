@@ -7,6 +7,9 @@ pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
     #[serde(skip)]
+    pub directory: String,
+    pub filename: String,
+    #[serde(skip)]
     pub path: String,
     #[serde(skip)]
     pub data: Vec<u8>,
@@ -23,6 +26,7 @@ pub mod init {
             path: path.clone(),
             data: Vec::new(),
             song_id: uuid::Uuid::nil(),
+            ..Default::default()
         }
     }
 }
