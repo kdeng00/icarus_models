@@ -57,6 +57,32 @@ impl CoverArt {
             ))
         }
     }
+
+    /// Gets the path of the CoverArt
+    pub fn get_path(&self) -> Result<String, std::io::Error> {
+        if self.directory.is_empty() {
+            return Err(std::io::Error::other("Directory has not been initialized"));
+        } else if self.filename.is_empty() {
+            return Err(std::io::Error::other("Filename has not bee initialized"));
+        }
+
+        let directory = &self.directory;
+        let last_index = directory.len() - 1;
+
+        if let Some(character) = directory.chars().nth(last_index) {
+            let buffer = if character != '/' {
+                directory.clone() + "/"
+            } else {
+                directory.clone()
+            };
+
+            Ok(buffer + &self.filename.clone()) 
+        } else {
+            Err(std::io::Error::other(
+                "Could not access last character of directory",
+            ))
+        }
+    }
 }
 
 pub mod io {
