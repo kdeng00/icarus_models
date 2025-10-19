@@ -114,9 +114,11 @@ mod tests {
 
     #[test]
     fn test_cover_art_image() {
-        let path: String = String::from("somepath");
-        let coverart = coverart::init::init_coverart_only_path(path.clone());
+        let dir = String::from("./");
+        let filename = String::from("CoverArt.png");
+        let coverart = coverart::init::init_coverart_dir_and_filename(&dir, &filename);
 
-        assert_eq!(path, coverart.path);
+        assert_eq!(dir, coverart.directory);
+        assert_eq!(filename, coverart.filename);
     }
 }
