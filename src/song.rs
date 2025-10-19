@@ -39,8 +39,8 @@ pub struct Song {
     pub track_count: i32,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub audio_type: String,
-    #[serde(skip_serializing_if = "String::is_empty")]
-    pub date_created: String,
+    #[serde(with = "time::serde::rfc3339::option")]
+    pub date_created: Option<time::OffsetDateTime>,
     #[serde(skip_serializing_if = "String::is_empty")]
     pub filename: String,
     #[serde(skip_serializing_if = "init::is_uuid_nil")]
