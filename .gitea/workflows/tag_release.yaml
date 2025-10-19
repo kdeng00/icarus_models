@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - next-v0.8
 
 jobs:
   release:
