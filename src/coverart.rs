@@ -31,16 +31,14 @@ impl CoverArt {
     /// Saves the coverart to the filesystem
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
         match self.get_path() {
-            Ok(path) => {
-                match std::fs::File::create(&path) {
-                    Ok(mut file) => match file.write_all(&self.data) {
-                        Ok(_) => Ok(()),
-                        Err(err) => Err(err),
-                    },
+            Ok(path) => match std::fs::File::create(&path) {
+                Ok(mut file) => match file.write_all(&self.data) {
+                    Ok(_) => Ok(()),
                     Err(err) => Err(err),
-                }
-            }
-            Err(err) => Err(err)
+                },
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
         }
     }
 
@@ -60,7 +58,7 @@ impl CoverArt {
                     ))
                 }
             }
-            Err(err) => Err(err)
+            Err(err) => Err(err),
         }
     }
 
@@ -105,7 +103,7 @@ pub mod io {
                     Err(err) => Err(err),
                 }
             }
-            Err(err) => Err(err)
+            Err(err) => Err(err),
         }
     }
 }
