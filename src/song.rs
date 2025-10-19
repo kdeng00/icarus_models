@@ -71,21 +71,22 @@ impl Song {
 
     pub fn song_path(&self) -> Result<String, std::io::Error> {
         if self.directory.is_empty() {
-            return Err(std::io::Error::other("Directory does not exist"));
+            return Err(std::io::Error::other("Directory has not been initialized"));
+        } else if self.filename.is_empty() {
+            return Err(std::io::Error::other("Filename has not bee initialized"));
         }
 
         let directory = &self.directory;
-        let mut buffer: String = directory.clone();
         let last_index = directory.len() - 1;
 
         if let Some(character) = directory.chars().nth(last_index) {
-            if character != '/' {
-                buffer += "/";
-            }
+            let buffer: String = if character != '/' {
+                directory.clone() + "/"
+            } else {
+                directory.clone()
+            };
 
-            buffer += &self.filename.clone();
-
-            Ok(buffer)
+            Ok(buffer + &self.filename.clone())
         } else {
             Err(std::io::Error::other(
                 "Could not access last character of directory",
