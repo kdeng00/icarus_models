@@ -10,22 +10,18 @@ pub struct CoverArt {
     pub directory: String,
     pub filename: String,
     #[serde(skip)]
-    pub path: String,
-    #[serde(skip)]
     pub data: Vec<u8>,
     pub song_id: uuid::Uuid,
 }
 
 pub mod init {
-    use crate::coverart::CoverArt;
+    use super::CoverArt;
 
-    pub fn init_coverart_only_path(path: String) -> CoverArt {
+    /// Initializes the CoverArt with just the directory and filename
+    pub fn init_coverart_dir_and_filename(directory: &str, filename: &str) -> CoverArt {
         CoverArt {
-            id: uuid::Uuid::nil(),
-            title: String::new(),
-            path: path.clone(),
-            data: Vec::new(),
-            song_id: uuid::Uuid::nil(),
+            directory: String::from(directory),
+            filename: String::from(filename),
             ..Default::default()
         }
     }
@@ -34,27 +30,37 @@ pub mod init {
 impl CoverArt {
     /// Saves the coverart to the filesystem
     pub fn save_to_filesystem(&self) -> Result<(), std::io::Error> {
-        match std::fs::File::create(&self.path) {
-            Ok(mut file) => match file.write_all(&self.data) {
-                Ok(_) => Ok(()),
-                Err(err) => Err(err),
-            },
-            Err(err) => Err(err),
+        match self.get_path() {
+            Ok(path) => {
+                match std::fs::File::create(&path) {
+                    Ok(mut file) => match file.write_all(&self.data) {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    },
+                    Err(err) => Err(err),
+                }
+            }
+            Err(err) => Err(err)
         }
     }
 
     /// Removes the coverart from the filesystem
     pub fn remove_from_filesystem(&self) -> Result<(), std::io::Error> {
-        let p = std::path::Path::new(&self.path);
-        if p.exists() {
-            match std::fs::remove_file(p) {
-                Ok(_) => Ok(()),
-                Err(err) => Err(err),
+        match self.get_path() {
+            Ok(path) => {
+                let p = std::path::Path::new(&path);
+                if p.exists() {
+                    match std::fs::remove_file(p) {
+                        Ok(_) => Ok(()),
+                        Err(err) => Err(err),
+                    }
+                } else {
+                    Err(std::io::Error::other(
+                        "Cannot delete file that does not exist",
+                    ))
+                }
             }
-        } else {
-            Err(std::io::Error::other(
-                "Cannot delete file that does not exist",
-            ))
+            Err(err) => Err(err)
         }
     }
 
@@ -90,12 +96,16 @@ pub mod io {
 
     /// Gets the raw data of the cover art
     pub fn to_data(coverart: &super::CoverArt) -> Result<Vec<u8>, std::io::Error> {
-        let path: &String = &coverart.path;
-        let mut file = std::fs::File::open(path)?;
-        let mut buffer = Vec::new();
-        match file.read_to_end(&mut buffer) {
-            Ok(_) => Ok(buffer),
-            Err(err) => Err(err),
+        match coverart.get_path() {
+            Ok(path) => {
+                let mut file = std::fs::File::open(path)?;
+                let mut buffer = Vec::new();
+                match file.read_to_end(&mut buffer) {
+                    Ok(_) => Ok(buffer),
+                    Err(err) => Err(err),
+                }
+            }
+            Err(err) => Err(err)
         }
     }
 }
