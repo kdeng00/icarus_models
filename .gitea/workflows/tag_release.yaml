@@ -3,10 +3,8 @@ name: Release Tagging
 on:
   push:
     branches:
-      - next-v0.8
-  pull_request:
-    branches:
       - main
+      - next-v0.8
 
 jobs:
   release:

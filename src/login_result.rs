@@ -2,7 +2,7 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize, utoipa::ToSchema)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct LoginResult {
     pub id: uuid::Uuid,
     pub username: String,
@@ -12,20 +12,14 @@ pub struct LoginResult {
     pub expiration: i64,
 }
 
-impl Default for LoginResult {
-    fn default() -> Self {
-        LoginResult {
-            id: uuid::Uuid::nil(),
-            username: String::new(),
-            token: String::new(),
-            token_type: String::new(),
-            expiration: -1,
-        }
-    }
-}
-
 impl LoginResult {
-    pub fn _to_json(&self) -> Result<String, serde_json::Error> {
+    pub fn to_json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(&self)
+    }
+
+    pub fn token_expired(&self) -> bool {
+        let current_time = time::OffsetDateTime::now_utc();
+        let expired = time::OffsetDateTime::from_unix_timestamp(self.expiration).unwrap();
+        current_time > expired
     }
 }

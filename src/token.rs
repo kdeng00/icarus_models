@@ -2,7 +2,7 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Token {
     pub scope: String,
     pub expiration: i64,
@@ -27,23 +27,16 @@ pub struct AccessToken {
     pub message: String,
 }
 
-impl Default for Token {
-    fn default() -> Self {
-        Token {
-            scope: String::new(),
-            expiration: -1,
-            audience: String::new(),
-            issuer: String::new(),
-            issued: -1,
-        }
-    }
-}
-
 impl AccessToken {
+    /// Get the token fit for Bearer authentication
     pub fn bearer_token(&self) -> String {
-        let mut token: String = String::from("Bearer ");
-        token += &self.token.clone();
-        token
+        format!("Bearer {}", self.token)
+    }
+
+    pub fn token_expired(&self) -> bool {
+        let current_time = time::OffsetDateTime::now_utc();
+        let expired = time::OffsetDateTime::from_unix_timestamp(self.expiration).unwrap();
+        current_time > expired
     }
 }
 
@@ -52,9 +45,10 @@ impl Token {
         serde_json::to_string_pretty(&self)
     }
 
-    // TODO: Implement
     pub fn token_expired(&self) -> bool {
-        false
+        let current_time = time::OffsetDateTime::now_utc();
+        let expired = time::OffsetDateTime::from_unix_timestamp(self.expiration).unwrap();
+        current_time > expired
     }
 
     pub fn contains_scope(&self, des_scope: &String) -> bool {
