@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - next-v0.8
 
 jobs:
   release:
