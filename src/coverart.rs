@@ -102,7 +102,7 @@ pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> S
     };
 
     if randomize {
-        let mut filename: String = String::new();
+        let mut filename: String = String::from("coverart-");
         let some_chars: String = String::from("abcdefghij0123456789");
         let some_chars_length = some_chars.len();
         let mut rng = rand::rng();
@@ -117,7 +117,7 @@ pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> S
         }
         filename + &file_extension
     } else {
-        "track-output".to_string() + &file_extension
+        "coverart-output".to_string() + &file_extension
     }
 }
 

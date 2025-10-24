@@ -143,12 +143,13 @@ pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
     };
 
     if randomize {
-        let mut filename: String = String::new();
+        let mut filename: String = String::from("track-");
         let some_chars: String = String::from("abcdefghij0123456789");
+        let some_chars_length = some_chars.len();
         let mut rng = rand::rng();
 
         for _ in 0..FILENAME_LENGTH {
-            let index = rng.random_range(0..=19);
+            let index = rng.random_range(0..=some_chars_length);
             let rando_char = some_chars.chars().nth(index);
 
             if let Some(c) = rando_char {
