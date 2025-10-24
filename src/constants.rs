@@ -12,3 +12,9 @@ pub mod file_extensions {
         pub const PNGEXTENSION: &str = ".png";
     }
 }
+
+pub mod error {
+    pub const DIRECTORY_NOT_INITIALIZED: &str = "Directory has not been initialized";
+    pub const FILENAME_NOT_INITIALIZED: &str = "Filename has not bee initialized";
+    pub const LAST_CHARACTER_IN_DIRECTORY: &str = "Could not access last character of directory";
+}

@@ -69,28 +69,24 @@ impl Song {
         }
     }
 
+    /// Gets the path of a Song
     pub fn song_path(&self) -> Result<String, std::io::Error> {
         if self.directory.is_empty() {
-            return Err(std::io::Error::other("Directory has not been initialized"));
+            return Err(std::io::Error::other(
+                crate::constants::error::DIRECTORY_NOT_INITIALIZED,
+            ));
         } else if self.filename.is_empty() {
-            return Err(std::io::Error::other("Filename has not bee initialized"));
+            return Err(std::io::Error::other(
+                crate::constants::error::FILENAME_NOT_INITIALIZED,
+            ));
         }
 
         let directory = &self.directory;
         let last_index = directory.len() - 1;
 
-        if let Some(character) = directory.chars().nth(last_index) {
-            let buffer: String = if character != '/' {
-                directory.clone() + "/"
-            } else {
-                directory.clone()
-            };
-
-            Ok(buffer + &self.filename.clone())
-        } else {
-            Err(std::io::Error::other(
-                "Could not access last character of directory",
-            ))
+        match crate::util::concatenate_path(directory, &self.filename, last_index) {
+            Ok(path) => Ok(path),
+            Err(err) => Err(err),
         }
     }
 

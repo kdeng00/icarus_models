@@ -7,6 +7,7 @@ pub mod song;
 pub mod token;
 pub mod types;
 pub mod user;
+pub mod util;
 
 pub mod init {
     pub fn is_id_valid(num: &i32) -> bool {
