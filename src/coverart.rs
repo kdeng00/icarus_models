@@ -1,6 +1,9 @@
 use std::io::Write;
 
+use rand::Rng;
 use serde::{Deserialize, Serialize};
+
+const FILENAME_LENGTH: i32 = 16;
 
 #[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
 pub struct CoverArt {
@@ -86,6 +89,40 @@ impl CoverArt {
                 "Could not access last character of directory",
             ))
         }
+    }
+}
+
+/// Generates filename for a CoverArt
+pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> String {
+    let file_extension = match typ {
+        crate::types::CoverArtTypes::PngExtension => {
+            String::from(crate::constants::file_extensions::image::PNGEXTENSION)
+        }
+        crate::types::CoverArtTypes::JpegExtension => {
+            String::from(crate::constants::file_extensions::image::JPEGEXTENSION)
+        }
+        crate::types::CoverArtTypes::JpgExtension => {
+            String::from(crate::constants::file_extensions::image::JPGEXTENSION)
+        }
+    };
+
+    if randomize {
+        let mut filename: String = String::new();
+        let some_chars: String = String::from("abcdefghij0123456789");
+        let some_chars_length = some_chars.len();
+        let mut rng = rand::rng();
+
+        for _ in 0..FILENAME_LENGTH {
+            let index = rng.random_range(0..=some_chars_length);
+            let rando_char = some_chars.chars().nth(index);
+
+            if let Some(c) = rando_char {
+                filename.push(c);
+            }
+        }
+        filename + &file_extension
+    } else {
+        "track-output".to_string() + &file_extension
     }
 }
 

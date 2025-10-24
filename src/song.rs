@@ -129,14 +129,12 @@ impl Song {
     }
 }
 
-/// Generates a filename. In order to save a song to the filesystem, the song must have
-/// a directory and filename
+/// Generates a filename. In order to save a song to the filesystem
 pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
     let file_extension = match typ {
         types::MusicTypes::DefaultMusicExtension => {
             String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
         }
-
         types::MusicTypes::WavExtension => {
             String::from(constants::file_extensions::audio::WAVEXTENSION)
         }
