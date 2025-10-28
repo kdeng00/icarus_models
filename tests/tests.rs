@@ -107,12 +107,21 @@ mod song_tests {
         };
 
         assert_eq!(song.directory.is_empty(), false);
-        song_cpy.filename = song::generate_filename(types::MusicTypes::FlacExtension, true);
+        match song::generate_filename(types::MusicTypes::FlacExtension, true) {
+            Ok(filename) => {
+                song_cpy.filename = filename;
+            }
+            Err(err) => {
+                assert!(false, "Error generatig filename: {err:?}");
+            }
+        };
         println!("Directory: {:?}", song_cpy.directory);
         println!("File to be created: {:?}", song_cpy.filename);
 
         match song::io::copy_song(&song, &mut song_cpy) {
-            Ok(_) => {}
+            Ok(_) => {
+                println!("Song copied");
+            }
             Err(err) => {
                 assert!(false, "Error copying song: Error: {err:?}")
             }

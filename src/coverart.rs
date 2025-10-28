@@ -1,11 +1,10 @@
 use std::io::Write;
 
 use rand::Rng;
-use serde::{Deserialize, Serialize};
 
 const FILENAME_LENGTH: i32 = 16;
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize, utoipa::ToSchema)]
+#[derive(Clone, Debug, Default, serde::Deserialize, serde::Serialize, utoipa::ToSchema)]
 pub struct CoverArt {
     pub id: uuid::Uuid,
     pub title: String,
@@ -18,11 +17,9 @@ pub struct CoverArt {
 }
 
 pub mod init {
-    use super::CoverArt;
-
     /// Initializes the CoverArt with just the directory and filename
-    pub fn init_coverart_dir_and_filename(directory: &str, filename: &str) -> CoverArt {
-        CoverArt {
+    pub fn init_coverart_dir_and_filename(directory: &str, filename: &str) -> super::CoverArt {
+        super::CoverArt {
             directory: String::from(directory),
             filename: String::from(filename),
             ..Default::default()
@@ -88,7 +85,10 @@ impl CoverArt {
 }
 
 /// Generates filename for a CoverArt
-pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> String {
+pub fn generate_filename(
+    typ: crate::types::CoverArtTypes,
+    randomize: bool,
+) -> Result<String, std::io::Error> {
     let file_extension = match typ {
         crate::types::CoverArtTypes::PngExtension => {
             String::from(crate::constants::file_extensions::image::PNGEXTENSION)
@@ -99,9 +99,12 @@ pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> S
         crate::types::CoverArtTypes::JpgExtension => {
             String::from(crate::constants::file_extensions::image::JPGEXTENSION)
         }
+        crate::types::CoverArtTypes::None => {
+            return Err(std::io::Error::other("Unsupported CoverArtTypes"));
+        }
     };
 
-    if randomize {
+    let filename: String = if randomize {
         let mut filename: String = String::from("coverart-");
         let some_chars: String = String::from("abcdefghij0123456789");
         let some_chars_length = some_chars.len();
@@ -115,10 +118,12 @@ pub fn generate_filename(typ: crate::types::CoverArtTypes, randomize: bool) -> S
                 filename.push(c);
             }
         }
-        filename + &file_extension
+        format!("{filename}{file_extension}")
     } else {
-        "coverart-output".to_string() + &file_extension
-    }
+        format!("coverart-output{file_extension}")
+    };
+
+    Ok(filename)
 }
 
 pub mod io {

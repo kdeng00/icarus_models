@@ -4,6 +4,7 @@ pub enum MusicTypes {
     WavExtension,
     FlacExtension,
     MPThreeExtension,
+    None,
 }
 
 #[derive(Debug)]
@@ -11,4 +12,5 @@ pub enum CoverArtTypes {
     PngExtension,
     JpegExtension,
     JpgExtension,
+    None,
 }

@@ -126,7 +126,10 @@ impl Song {
 }
 
 /// Generates a filename. In order to save a song to the filesystem
-pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
+pub fn generate_filename(
+    typ: types::MusicTypes,
+    randomize: bool,
+) -> Result<String, std::io::Error> {
     let file_extension = match typ {
         types::MusicTypes::DefaultMusicExtension => {
             String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
@@ -140,9 +143,10 @@ pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
         types::MusicTypes::MPThreeExtension => {
             String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
         }
+        types::MusicTypes::None => return Err(std::io::Error::other("Unsupported MusicTypes")),
     };
 
-    if randomize {
+    let filename: String = if randomize {
         let mut filename: String = String::from("track-");
         let some_chars: String = String::from("abcdefghij0123456789");
         let some_chars_length = some_chars.len();
@@ -156,10 +160,12 @@ pub fn generate_filename(typ: types::MusicTypes, randomize: bool) -> String {
                 filename.push(c);
             }
         }
-        filename + &file_extension
+        format!("{filename}{file_extension}")
     } else {
-        "track-output".to_string() + &file_extension
-    }
+        format!("track-output{file_extension}")
+    };
+
+    Ok(filename)
 }
 
 /// I/O operations for songs
