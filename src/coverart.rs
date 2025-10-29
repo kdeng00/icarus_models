@@ -11,6 +11,7 @@ pub struct CoverArt {
     #[serde(skip)]
     pub directory: String,
     pub filename: String,
+    pub file_type: String,
     #[serde(skip)]
     pub data: Vec<u8>,
     pub song_id: uuid::Uuid,
