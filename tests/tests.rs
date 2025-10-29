@@ -107,7 +107,7 @@ mod song_tests {
         };
 
         assert_eq!(song.directory.is_empty(), false);
-        match song::generate_filename(types::MusicTypes::FlacExtension, true) {
+        match song::generate_filename(types::MusicType::FlacExtension, true) {
             Ok(filename) => {
                 song_cpy.filename = filename;
             }

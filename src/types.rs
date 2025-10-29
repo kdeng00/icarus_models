@@ -1,5 +1,5 @@
 #[derive(Debug)]
-pub enum MusicTypes {
+pub enum MusicType {
     DefaultMusicExtension,
     WavExtension,
     FlacExtension,
@@ -8,7 +8,7 @@ pub enum MusicTypes {
 }
 
 #[derive(Debug)]
-pub enum CoverArtTypes {
+pub enum CoverArtType {
     PngExtension,
     JpegExtension,
     JpgExtension,

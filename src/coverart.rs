@@ -86,20 +86,20 @@ impl CoverArt {
 
 /// Generates filename for a CoverArt
 pub fn generate_filename(
-    typ: crate::types::CoverArtTypes,
+    typ: crate::types::CoverArtType,
     randomize: bool,
 ) -> Result<String, std::io::Error> {
     let file_extension = match typ {
-        crate::types::CoverArtTypes::PngExtension => {
+        crate::types::CoverArtType::PngExtension => {
             String::from(crate::constants::file_extensions::image::PNGEXTENSION)
         }
-        crate::types::CoverArtTypes::JpegExtension => {
+        crate::types::CoverArtType::JpegExtension => {
             String::from(crate::constants::file_extensions::image::JPEGEXTENSION)
         }
-        crate::types::CoverArtTypes::JpgExtension => {
+        crate::types::CoverArtType::JpgExtension => {
             String::from(crate::constants::file_extensions::image::JPGEXTENSION)
         }
-        crate::types::CoverArtTypes::None => {
+        crate::types::CoverArtType::None => {
             return Err(std::io::Error::other("Unsupported CoverArtTypes"));
         }
     };

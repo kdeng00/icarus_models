@@ -126,24 +126,21 @@ impl Song {
 }
 
 /// Generates a filename. In order to save a song to the filesystem
-pub fn generate_filename(
-    typ: types::MusicTypes,
-    randomize: bool,
-) -> Result<String, std::io::Error> {
+pub fn generate_filename(typ: types::MusicType, randomize: bool) -> Result<String, std::io::Error> {
     let file_extension = match typ {
-        types::MusicTypes::DefaultMusicExtension => {
+        types::MusicType::DefaultMusicExtension => {
             String::from(constants::file_extensions::audio::DEFAULTMUSICEXTENSION)
         }
-        types::MusicTypes::WavExtension => {
+        types::MusicType::WavExtension => {
             String::from(constants::file_extensions::audio::WAVEXTENSION)
         }
-        types::MusicTypes::FlacExtension => {
+        types::MusicType::FlacExtension => {
             String::from(constants::file_extensions::audio::FLACEXTENSION)
         }
-        types::MusicTypes::MPThreeExtension => {
+        types::MusicType::MPThreeExtension => {
             String::from(constants::file_extensions::audio::MPTHREEEXTENSION)
         }
-        types::MusicTypes::None => return Err(std::io::Error::other("Unsupported MusicTypes")),
+        types::MusicType::None => return Err(std::io::Error::other("Unsupported MusicTypes")),
     };
 
     let filename: String = if randomize {
