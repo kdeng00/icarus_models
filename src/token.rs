@@ -1,6 +1,6 @@
 use std::default::Default;
 
-use serde::{Deserialize};
+use serde::Deserialize;
 
 #[derive(Clone, Debug, Default, Deserialize, serde::Serialize)]
 pub struct Token {
