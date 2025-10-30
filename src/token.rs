@@ -1,8 +1,8 @@
 use std::default::Default;
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, serde::Serialize)]
 pub struct Token {
     pub scope: String,
     pub expiration: i64,
@@ -11,7 +11,7 @@ pub struct Token {
     pub issued: i64,
 }
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, serde::Serialize)]
 pub struct AccessToken {
     #[serde(alias = "init::is_uuid_nil")]
     pub user_id: uuid::Uuid,
@@ -25,6 +25,21 @@ pub struct AccessToken {
     pub expiration: i64,
     #[serde(alias = "message")]
     pub message: String,
+}
+
+#[derive(Clone, Debug, serde::Serialize, Deserialize)]
+pub struct UserClaims {
+    pub iss: String,
+    pub aud: String, // Audience
+    pub sub: String, // Subject (user ID)
+    #[serde(deserialize_with = "deserialize_i64_from_f64")]
+    pub exp: i64, // Expiration time (UTC timestamp)
+    #[serde(deserialize_with = "deserialize_i64_from_f64")]
+    pub iat: i64, // Issued at (UTC timestamp)
+    // pub azp: String,
+    // pub gty: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub roles: Option<Vec<String>>, // Optional roles
 }
 
 impl AccessToken {
@@ -53,6 +68,25 @@ impl Token {
 
     pub fn contains_scope(&self, des_scope: &String) -> bool {
         self.scope.contains(des_scope)
+    }
+}
+
+fn deserialize_i64_from_f64<'de, D>(deserializer: D) -> Result<i64, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let val = f64::deserialize(deserializer)?;
+    // Handle NaN and infinity cases
+    if val.is_nan() || val.is_infinite() {
+        return Err(serde::de::Error::custom("invalid float value"));
+    }
+    // Round to nearest integer and convert
+    let rounded = val.round();
+    // Check if the rounded value can fit in i64
+    if rounded < (i64::MIN as f64) || rounded > (i64::MAX as f64) {
+        Err(serde::de::Error::custom("float out of i64 range"))
+    } else {
+        Ok(rounded as i64)
     }
 }
 
