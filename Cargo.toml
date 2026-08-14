@@ -8,7 +8,7 @@ license = "MIT"
 
 [dependencies]
 serde = { version = "1.0.229", features = ["derive"] }
-serde_json = { version = "1.0.150" }
+serde_json = { version = "1.0.151" }
 rand = { version = "0.10.2" }
 time = { version = "0.3.53", features = ["formatting", "macros", "parsing", "serde"] }
 uuid = { version = "1.23.5", features = ["v4", "serde"] }
