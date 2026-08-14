@@ -1,17 +1,17 @@
 [package]
 name = "simodels"
-version = "0.11.3"
+version = "0.11.4"
 edition = "2024"
 rust-version = "1.95"
 description = "models used for the soaricarus project"
 license = "MIT"
 
 [dependencies]
-serde = { version = "1.0.228", features = ["derive"] }
-serde_json = { version = "1.0.150" }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.151" }
 rand = { version = "0.10.2" }
-time = { version = "0.3.53", features = ["formatting", "macros", "parsing", "serde"] }
-uuid = { version = "1.23.5", features = ["v4", "serde"] }
+time = { version = "0.3.55", features = ["formatting", "macros", "parsing", "serde"] }
+uuid = { version = "1.24.0", features = ["v4", "serde"] }
 josekit = { version = "0.10.3" }
 utoipa = { version = "5.5.0", features = ["uuid", "time"] }
 

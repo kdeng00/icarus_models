@@ -49,6 +49,7 @@ pub struct Song {
     pub data: Vec<u8>,
     #[serde(skip)]
     pub directory: String,
+    pub file_key: String,
     // TODO: Think about what to do with this
     // #[serde(skip)]
     // pub album_id: i32,
